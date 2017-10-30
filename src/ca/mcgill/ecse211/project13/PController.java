@@ -20,13 +20,13 @@ public class PController implements UltrasonicController {
    */
   public PController(int bandCenter, int bandwidth) {
 
-	  this.bandCenter = bandCenter;
+	    this.bandCenter = bandCenter;
 	    this.bandwidth = bandwidth;
 	    
 	    MainProject.leftMotor.setSpeed(200); // Start robot moving forward
 	    MainProject.rightMotor.setSpeed(200);
-	    MainProject.leftMotor.forward();
-	    MainProject.rightMotor.forward();
+	    forward();
+	     
   }
 
   @Override
@@ -80,8 +80,8 @@ public class PController implements UltrasonicController {
     	 MainProject.leftMotor.setSpeed((int) (MOTOR_SPEED - delta));
       	 MainProject.rightMotor.setSpeed((int) (MOTOR_SPEED + 100));
     	// MainProject.leftMotor.setAcceleration(1500);
-      	 MainProject.leftMotor.forward();
-   	     MainProject.rightMotor.forward();
+      	 forward();
+   	      
     }
     	 
     // close to wall
@@ -90,8 +90,8 @@ public class PController implements UltrasonicController {
     	MainProject.leftMotor.setSpeed((int) (MOTOR_SPEED + delta));
    	    MainProject.rightMotor.setSpeed(MOTOR_SPEED);
    	    MainProject.leftMotor.setAcceleration(1500);
-   	    MainProject.leftMotor.forward();
-	    MainProject.rightMotor.forward();
+   	    forward();
+	     
 	   // System.out.println("R: " + MainProject.rightMotor.getSpeed() + " L: " + MainProject.leftMotor.getSpeed());
 	    }
 	  
@@ -100,12 +100,18 @@ public class PController implements UltrasonicController {
     else {  //if (Math.abs(error) <= bandWidth){
      	MainProject.leftMotor.setSpeed(MOTOR_SPEED); // Start robot moving forward
  	    MainProject.rightMotor.setSpeed(MOTOR_SPEED);
- 	    MainProject.leftMotor.forward();
- 	    MainProject.rightMotor.forward();
+ 	    forward();
+ 	     
      }  
 	    
   }
-
+  /**
+   * Sets both motors to go forward
+   */
+  public void forward(){
+ 	    MainProject.leftMotor.forward();
+	    MainProject.rightMotor.forward();
+  }
 
   @Override
   public int readUSDistance() {
