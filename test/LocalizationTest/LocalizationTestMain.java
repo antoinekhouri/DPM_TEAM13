@@ -61,7 +61,7 @@ public class LocalizationTestMain {
 				if (buttonChoice == Button.ID_ESCAPE) {
 			        System.exit(0);
 			    }
-				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorSensor, colorData);
+				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValue, colorData);
 				lsTest.localize();
 		    } else if (buttonChoice == Button.ID_RIGHT) {
 				USLocalizationTest usLocalizer = new USLocalizationTest( false,odometer);
@@ -73,7 +73,7 @@ public class LocalizationTestMain {
 				if (buttonChoice == Button.ID_ESCAPE) {
 			        System.exit(0);
 			    }
-				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorSensor, colorData);
+				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValue, colorData);
 				lsTest.localize();
 		    } else if (buttonChoice == Button.ID_ESCAPE) {
 		        System.exit(0);
