@@ -1,5 +1,6 @@
 package NavigationTest;
 
+
 import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -49,6 +50,19 @@ public class NavigationTestMain {
 			    		Button.ID_ESCAPE);
 			    if(buttonChoice == Button.ID_ESCAPE){
 			    	System.exit(0);
+			    }
+			    if(buttonChoice == Button.ID_LEFT || buttonChoice == Button.ID_RIGHT){
+			    	      
+			    	      Navigation navigation = new Navigation(true);
+			    	      UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, navigation);
+			    	      usPoller.start();
+			    	      leftMotor.forward();
+			    	      leftMotor.flt();
+			    	      rightMotor.forward();
+			    	      rightMotor.flt();
+
+			    	      odometer.start();
+			    	      odometryDisplay.start();
 			    }
 	  }
 }
