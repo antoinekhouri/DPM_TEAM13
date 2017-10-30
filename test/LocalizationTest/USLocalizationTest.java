@@ -1,10 +1,11 @@
-package ca.mcgill.ecse211.project13;
+package LocalizationTest;
 
 
+import LocalizationTest.UltrasonicController;
 import lejos.hardware.Sound;
 
 
-public class UltrasonicLocalizer implements UltrasonicController {
+public class USLocalizationTest implements UltrasonicController {
 
 	public static double distance;
 	private static final int ROTATE_SPEED = 100;
@@ -44,7 +45,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param odometer Odometer used to get information about the robot's current position
 	 * @param position Position the robot is placed at (0-1-2-3)
 	 */
-	public UltrasonicLocalizer(boolean isFallingEdge, Odometer odometer, int position){
+	public USLocalizationTest(boolean isFallingEdge, Odometer odometer){
 		this.isFallingEdge = isFallingEdge;
 		this.odometer = odometer;
 		this.position = position;
@@ -55,8 +56,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param distance distance read by the US sensor
 	 */
 	public static void fallingEdge(Odometer odometer, double distance){
-		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-	    MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+		LocalizationTestMain.leftMotor.setSpeed(ROTATE_SPEED);
+	    LocalizationTestMain.rightMotor.setSpeed(ROTATE_SPEED);
 
 	    if(distance<d+k && !isAlphaOneSet){
 	    	alpha1 = odometer.getTheta();
@@ -77,8 +78,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    	isFirstTurnDone = true;
 	    	
 	    } else {
-	    	MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-	    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
+	    	LocalizationTestMain.leftMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), true);
+	    	LocalizationTestMain.rightMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), true);
 	    }
 	      
 	    if(distance<d+k && isFirstTurnDone && !isBeta1Set){
@@ -98,8 +99,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	   	}
 	   
 	    if(isFirstTurnDone && !isBetaSet){
-	    	MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
-	    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
+	    	LocalizationTestMain.leftMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -360.0), true);
+	    	LocalizationTestMain.rightMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -360.0), true);
 	    }
 	    
 	    if(isAlphaSet && isBetaSet){
@@ -124,11 +125,11 @@ public class UltrasonicLocalizer implements UltrasonicController {
   			  dTheta = dTheta - 360;
   		  }
   		  
-  		  MainProject.rightMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -odometer.getTheta()-dTheta), true);
-  		  MainProject.leftMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -odometer.getTheta()-dTheta), false);
+  		  LocalizationTestMain.rightMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -odometer.getTheta()-dTheta), true);
+  		  LocalizationTestMain.leftMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -odometer.getTheta()-dTheta), false);
   		  if(this.position ==1 || this.position ==3){
-  			  MainProject.rightMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90), true);
-  	  		  MainProject.leftMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90), false);
+  			  LocalizationTestMain.rightMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -90), true);
+  	  		  LocalizationTestMain.leftMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -90), false);
   		  }
   		  odometer.setTheta(0);
   		  keepGoing = false;
@@ -169,8 +170,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param distance Distance read by the US sensor
 	 */
 	public static void risingEdge(Odometer odometer, double distance){
-		  MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-	      MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+		  LocalizationTestMain.leftMotor.setSpeed(ROTATE_SPEED);
+	      LocalizationTestMain.rightMotor.setSpeed(ROTATE_SPEED);
 	      
 	      if(distance > d-k && !isAlphaOneSet){
 	    	  alpha1 = odometer.getTheta();
@@ -190,8 +191,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	      if(isAlphaSet && distance>minDistance){
 	    	  isFirstTurnDone = true;
 	      } else {
-		      MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-	    	  MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
+		      LocalizationTestMain.leftMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), true);
+	    	  LocalizationTestMain.rightMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), true);
 	      }
 	      
 	      if(isFirstTurnDone && odometer.getTheta()<minTheta){
@@ -215,8 +216,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	   	  
 	   	  //turn until the second rising edge is detected
 	   	  if(isFirstTurnDone && !isBetaSet){
-	    	  MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
-	    	  MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
+	    	  LocalizationTestMain.leftMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -360.0), true);
+	    	  LocalizationTestMain.rightMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, -360.0), true);
 	      }
 
 	   	  if(isAlphaSet && isBetaSet){
@@ -283,11 +284,6 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	@Override
 	public int readUSDistance() {
 		// 
-		return 0;
-	}
-	@Override
-	public double readUSError() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	
