@@ -2,7 +2,11 @@ package ca.mcgill.ecse211.project13;
 
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
-
+/**
+ * This class is what is used to make the robot attach to the zip line, traverse it and land
+ * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
+ *
+ */
 public class TraverseZipLine {
 	
 	  private static final int FORWARD_SPEED = 300;

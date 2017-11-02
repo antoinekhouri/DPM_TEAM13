@@ -9,7 +9,12 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
-
+/**
+ * This class is what is used to navigate the robot to (x,y) and align it with (Xc, Yc). 
+ * The robot first moves up the X axis, then turns 90 degrees and moves up the Y axis in this class.
+ * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
+ *
+ */
 public class Navigation implements UltrasonicController {
   // Constants and variables
   private static final int FORWARD_SPEED = 185;

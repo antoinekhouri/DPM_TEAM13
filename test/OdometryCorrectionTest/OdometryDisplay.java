@@ -2,34 +2,22 @@
  * OdometryDisplay.java
  */
 
-package ca.mcgill.ecse211.project13;
+package OdometryCorrectionTest;
 
 import lejos.hardware.lcd.TextLCD;
-/**
- * This class is used to display the odometry information on the LCD screen
- * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
- *
- */
+
 public class OdometryDisplay extends Thread {
   private static final long DISPLAY_PERIOD = 250;
   private Odometer odometer;
   private TextLCD t;
 
   // constructor
-  /**
-   * Default constructor
-   * @param odometer Input odometer that is being displayed
-   * @param t The textLCD object used to display the information on the robot's screen
-   */
   public OdometryDisplay(Odometer odometer, TextLCD t) {
     this.odometer = odometer;
     this.t = t;
   }
 
   // run method (required for Thread)
-  /**
-   * run method for the odometry display class
-   */
   public void run() {
     long displayStart, displayEnd;
     double[] position = new double[3];
@@ -44,7 +32,6 @@ public class OdometryDisplay extends Thread {
       t.drawString("X:              ", 0, 0);
       t.drawString("Y:              ", 0, 1);
       t.drawString("T:              ", 0, 2);
-      // t.drawString("" + , 0, 3);
 
       // get the odometry information
       odometer.getPosition(position, new boolean[] {true, true, true});
@@ -53,6 +40,7 @@ public class OdometryDisplay extends Thread {
       for (int i = 0; i < 3; i++) {
         t.drawString(formattedDoubleToString(position[i], 2), 3, i);
       }
+
       // throttle the OdometryDisplay
       displayEnd = System.currentTimeMillis();
       if (displayEnd - displayStart < DISPLAY_PERIOD) {
@@ -66,12 +54,7 @@ public class OdometryDisplay extends Thread {
       }
     }
   }
-  /**
-   * formats the double values to string in order to display them
-   * @param x the double value to be formatted
-   * @param places Deals with decimal places
-   * @return formatted input double in a string format
-   */
+
   private static String formattedDoubleToString(double x, int places) {
     String result = "";
     String stack = "";

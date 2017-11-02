@@ -3,7 +3,9 @@ package ca.mcgill.ecse211.project13;
 
 import lejos.hardware.Sound;
 
-
+/**
+ * This is the class used to implement ultrasonic localization before light localization takes place.
+ */
 public class UltrasonicLocalizer implements UltrasonicController {
 
 	public static double distance;

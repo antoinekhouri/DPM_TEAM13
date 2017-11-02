@@ -15,7 +15,12 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
-
+/**
+ * This is the main class that will run the robot. It will run all the threads that are required
+ * for the robot to performed the desired actions.
+ * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
+ *
+ */
 public class MainProject {
 
   public static final double WHEEL_RADIUS = 2.1;
@@ -51,6 +56,7 @@ public class MainProject {
     int buttonChoice;
     final TextLCD t = LocalEV3.get().getTextLCD();
     final Odometer odometer = new Odometer(leftMotor, rightMotor);
+    OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
     OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 
     @SuppressWarnings("resource")

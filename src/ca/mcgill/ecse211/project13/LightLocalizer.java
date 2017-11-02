@@ -3,7 +3,11 @@ package ca.mcgill.ecse211.project13;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
-
+/**
+ * 
+ * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
+ *This class is used to localize the robot using the light sensor after the ultrasonic localization is complete.
+ */
 public class LightLocalizer {
 
 	//abc

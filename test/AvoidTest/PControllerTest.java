@@ -1,12 +1,8 @@
-package ca.mcgill.ecse211.project13;
+package AvoidTest;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-/**
- * This class implements the P-controller type avoidance for our robot.
- * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
- *
- */
-public class PController implements UltrasonicController {
+
+public class PControllerTest implements UltrasonicController {
 
   /* Constants */
   private static final int MOTOR_SPEED = 200;
@@ -22,13 +18,13 @@ public class PController implements UltrasonicController {
    * @param bandCenter desired minimum distance where the robot corrects its movement
    * @param bandwidth  desired threshold below which the robot starst its movement correciton 
    */
-  public PController(int bandCenter, int bandwidth) {
+  public PControllerTest(int bandCenter, int bandwidth) {
 
 	    this.bandCenter = bandCenter;
 	    this.bandwidth = bandwidth;
 	    
-	    MainProject.leftMotor.setSpeed(200); // Start robot moving forward
-	    MainProject.rightMotor.setSpeed(200);
+	    AvoidTestMain.leftMotor.setSpeed(200); // Start robot moving forward
+	    AvoidTestMain.rightMotor.setSpeed(200);
 	    forward();
 	     
   }
@@ -81,8 +77,8 @@ public class PController implements UltrasonicController {
     		 } 
     	 }
     	 
-    	 MainProject.leftMotor.setSpeed((int) (MOTOR_SPEED - delta));
-      	 MainProject.rightMotor.setSpeed((int) (MOTOR_SPEED + 100));
+    	 AvoidTestMain.leftMotor.setSpeed((int) (MOTOR_SPEED - delta));
+    	 AvoidTestMain.rightMotor.setSpeed((int) (MOTOR_SPEED + 100));
     	// MainProject.leftMotor.setAcceleration(1500);
       	 forward();
    	      
@@ -91,9 +87,9 @@ public class PController implements UltrasonicController {
     // close to wall
      //else { //if (error > bandWidth){
     else if (correctdistance < errorTooClose){
-    	MainProject.leftMotor.setSpeed((int) (MOTOR_SPEED + delta));
-   	    MainProject.rightMotor.setSpeed(MOTOR_SPEED);
-   	    MainProject.leftMotor.setAcceleration(1500);
+    	AvoidTestMain.leftMotor.setSpeed((int) (MOTOR_SPEED + delta));
+    	AvoidTestMain.rightMotor.setSpeed(MOTOR_SPEED);
+    	AvoidTestMain.leftMotor.setAcceleration(1500);
    	    forward();
 	     
 	   // System.out.println("R: " + MainProject.rightMotor.getSpeed() + " L: " + MainProject.leftMotor.getSpeed());
@@ -102,8 +98,8 @@ public class PController implements UltrasonicController {
 	  //this.distance = distance;	 
     
     else {  //if (Math.abs(error) <= bandWidth){
-     	MainProject.leftMotor.setSpeed(MOTOR_SPEED); // Start robot moving forward
- 	    MainProject.rightMotor.setSpeed(MOTOR_SPEED);
+    	AvoidTestMain.leftMotor.setSpeed(MOTOR_SPEED); // Start robot moving forward
+    	AvoidTestMain.rightMotor.setSpeed(MOTOR_SPEED);
  	    forward();
  	     
      }  
@@ -113,8 +109,8 @@ public class PController implements UltrasonicController {
    * Sets both motors to go forward
    */
   public void forward(){
- 	    MainProject.leftMotor.forward();
-	    MainProject.rightMotor.forward();
+	  AvoidTestMain.leftMotor.forward();
+	  AvoidTestMain.rightMotor.forward();
   }
 
   @Override
