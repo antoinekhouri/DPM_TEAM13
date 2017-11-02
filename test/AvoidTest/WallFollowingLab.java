@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.project13;
+package AvoidTest;
 
 import lejos.hardware.sensor.*;
 import lejos.hardware.ev3.LocalEV3;
@@ -38,7 +38,7 @@ public class WallFollowingLab {
 //    BangBangController bangbangController =
 //        new BangBangController(bandCenter, bandWidth, motorLow, motorHigh);
 
-    PController pController = new PController(bandCenter, bandWidth);
+    PControllerTest pController = new PControllerTest(bandCenter, bandWidth);
 
     // Setup ultrasonic sensor
     // There are 4 steps involved:
