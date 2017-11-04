@@ -34,7 +34,7 @@ public class Navigation implements UltrasonicController {
    * This constructor is simply used in order to indicate to the system whether or not it will
    * require wall avoidance.
    * @param isAvoidingWall a boolean that indicates whether or not the system will require to avoid a wall
-   * @return nothing
+   *
    */
   public Navigation(boolean isAvoidingWall) {
     this.isAvoidingWall = isAvoidingWall;

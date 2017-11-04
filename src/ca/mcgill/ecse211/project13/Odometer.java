@@ -37,8 +37,8 @@ public class Odometer extends Thread {
   }
   /**
    * This is where the odometer thread is run, using the run() method. 
-   * @param none
-   * @return none
+   *
+   *
    */
   // run method (required for Thread)
   public void run() {

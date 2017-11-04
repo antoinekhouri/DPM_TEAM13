@@ -12,6 +12,7 @@ import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 /**
  * This is the thread that corrects the errors created in the odometer.
+ * The actual implementation of the correction is not there yet, but will be shortly.
  * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */
