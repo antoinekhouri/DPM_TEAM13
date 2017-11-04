@@ -259,7 +259,7 @@ public class MainProject {
 				}
 			}
 			if(currState == State.CrossingBridge){
-				cb.cross(bridgeX, bridgeY, bridgeEndX, bridgeEndY);
+				cb.cross(bridgeEndX, bridgeEndY, odometer);
 				if(odometer.getX()>friendlyZoneXStart && odometer.getX()<friendlyZoneXEnd
 						&& odometer.getY()>friendlyZoneYStart && odometer.getY()<friendlyZoneYEnd){
 					setState(State.Done);
