@@ -14,9 +14,10 @@ import lejos.robotics.SampleProvider;
 
 public class LocalizationTestMain {
 	  public static final double WHEEL_RADIUS = 2.1;
-	  public static final double TRACK = 9.7;
+	  public static final double TRACK = 9.1;
 	  private static final Port usPort = LocalEV3.get().getPort("S1");
-	  private static final Port lsPort = LocalEV3.get().getPort("S2");
+	  private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
+	  private static final Port lsPortRight = LocalEV3.get().getPort("S4");
 	  public static final EV3LargeRegulatedMotor leftMotor =
 	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	  public static final EV3LargeRegulatedMotor rightMotor =
@@ -38,9 +39,14 @@ public class LocalizationTestMain {
 		    float[] usData = new float[usDistance.sampleSize()];
 
 		    @SuppressWarnings("resource")
-		    SensorModes colorSensor = new EV3ColorSensor(lsPort);
-		    SampleProvider colorValue = colorSensor.getMode("Red");
-		    float[] colorData = new float[3];
+		    SensorModes colorSensorLeft = new EV3ColorSensor(lsPortLeft);
+		    SampleProvider colorValueLeft = colorSensorLeft.getMode("Red");
+		    float[] colorDataLeft = new float[3];
+		    
+		    @SuppressWarnings("resource")
+			SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
+		    SampleProvider colorValueRight = colorSensorRight.getMode("Red");
+		    float[] colorDataRight = new float[3];
 		    
 		    do {
 		        t.clear();
@@ -61,7 +67,8 @@ public class LocalizationTestMain {
 				if (buttonChoice == Button.ID_ESCAPE) {
 			        System.exit(0);
 			    }
-				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValue, colorData);
+				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValueLeft, colorDataLeft
+						, colorValueRight, colorDataRight);
 				lsTest.localize();
 		    } else if (buttonChoice == Button.ID_RIGHT) {
 				USLocalizationTest usLocalizer = new USLocalizationTest( false,odometer);
@@ -73,10 +80,12 @@ public class LocalizationTestMain {
 				if (buttonChoice == Button.ID_ESCAPE) {
 			        System.exit(0);
 			    }
-				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValue, colorData);
+				LightLocalizationTest lsTest = new LightLocalizationTest(odometer, colorValueLeft, colorDataLeft,
+						colorValueRight, colorDataRight);
 				lsTest.localize();
 		    } else if (buttonChoice == Button.ID_ESCAPE) {
 		        System.exit(0);
-		    }
+		    }while (Button.waitForAnyPress() != Button.ID_ESCAPE);
+		    System.exit(0);
 	  }
 }

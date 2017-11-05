@@ -41,7 +41,7 @@ public class MainProject {
 	}
 	public static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.7;
+	public static final double TRACK = 6.9;
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lsPort = LocalEV3.get().getPort("S2");
 	public static final EV3LargeRegulatedMotor leftMotor =

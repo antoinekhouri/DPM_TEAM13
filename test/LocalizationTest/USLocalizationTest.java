@@ -8,7 +8,7 @@ import lejos.hardware.Sound;
 public class USLocalizationTest implements UltrasonicController {
 
 	public static double distance;
-	private static final int ROTATE_SPEED = 100;
+	private static final int ROTATE_SPEED = 60;
 	private boolean isFallingEdge;
 	private Odometer odometer;
 	private static int k = 1;
@@ -58,14 +58,19 @@ public class USLocalizationTest implements UltrasonicController {
 	public static void fallingEdge(Odometer odometer, double distance){
 		LocalizationTestMain.leftMotor.setSpeed(ROTATE_SPEED);
 	    LocalizationTestMain.rightMotor.setSpeed(ROTATE_SPEED);
+	    
+//	    LocalizationTestMain.leftMotor.rotate(convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), true);
+//    	LocalizationTestMain.rightMotor.rotate(-convertAngle(LocalizationTestMain.WHEEL_RADIUS, LocalizationTestMain.TRACK, 360.0), false);
 
 	    if(distance<d+k && !isAlphaOneSet){
 	    	alpha1 = odometer.getTheta();
+	    	Sound.beep();
 	    	isAlphaOneSet = true;
 	    }
 	    
 	    if(distance<d-k && isAlphaOneSet && !isAlpha2Set){
 	    	alpha2 = odometer.getTheta();
+	    	Sound.beep();
 	    	isAlpha2Set = true;
 	    }
 	      
@@ -85,11 +90,13 @@ public class USLocalizationTest implements UltrasonicController {
 	    if(distance<d+k && isFirstTurnDone && !isBeta1Set){
 	    	beta1 = odometer.getTheta();
 	    	isBeta1Set = true;
+	    	Sound.beep();
 	    }
 	      
 	    if(distance<d-k && isBeta1Set && !isBeta2Set){
 	    	beta2 = odometer.getTheta();
 	    	isBeta2Set = true;
+	    	Sound.beep();
 	    }
 	   	  
 	    if(isBeta1Set && isBeta2Set){
@@ -105,10 +112,10 @@ public class USLocalizationTest implements UltrasonicController {
 	    
 	    if(isAlphaSet && isBetaSet){
 	    	if(alpha<beta){
-	    		dTheta = 0- (alpha+beta)/2;
+	    		dTheta = -50- (alpha+beta)/2;
 	    		isdThetaSet = true;
 	    	} else {
-	    		dTheta = 170- (alpha+beta)/2;
+	    		dTheta = 130- (alpha+beta)/2;
 	   			isdThetaSet = true;
 	   		  }
 	   	 }	   	  	   	  
