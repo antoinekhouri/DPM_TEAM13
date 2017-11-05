@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.project13;
 
 //import ca.mcgill.ecse211.project13.UltrasonicLocalizer;
 import ca.mcgill.ecse211.project13.UltrasonicPoller;
+import ca.mcgill.ecse211.project13.UltrasonicController;	
 import ca.mcgill.ecse211.project13.LightLocalizer;
 import ca.mcgill.ecse211.project13.TraverseZipLine;
 import ca.mcgill.ecse211.project13.UltrasonicLocalizer;
@@ -43,7 +44,8 @@ public class MainProject {
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 6.9;
 	private static final Port usPort = LocalEV3.get().getPort("S1");
-	private static final Port lsPort = LocalEV3.get().getPort("S2");
+	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
+	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	public static final EV3LargeRegulatedMotor rightMotor =
@@ -100,9 +102,14 @@ public class MainProject {
 		float[] usData = new float[usDistance.sampleSize()];
 
 		@SuppressWarnings("resource")
-		SensorModes colorSensor = new EV3ColorSensor(lsPort);
-		SampleProvider colorValue = colorSensor.getMode("Red");
-		float[] colorData = new float[3];
+		SensorModes colorSensorLeft = new EV3ColorSensor(lsPortLeft);
+		SampleProvider colorValueLeft = colorSensorLeft.getMode("Red");
+		float[] colorDataLeft = new float[3];
+		
+		@SuppressWarnings("resource")
+		SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
+	    SampleProvider colorValueRight = colorSensorRight.getMode("Red");
+	    float[] colorDataRight = new float[3];
 
 		//    LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValue, colorData);
 		int position = 4;
@@ -180,10 +187,10 @@ public class MainProject {
 			}
 		} while (buttonChoice != Button.ID_ENTER);
 		while(currState != State.Done){
-			UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(true, odometer, position);
+			UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(true, odometer);
 			UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, usLocalizer);
 			CrossBridge cb = new CrossBridge();
-			final TraverseZipLine trav = new TraverseZipLine(odometer, colorValue, colorData );
+			final TraverseZipLine trav = new TraverseZipLine(odometer, colorValueLeft, colorDataLeft );
 			odometer.start();
 			odometryDisplay.start();
 			// start the odometer and the display
@@ -204,8 +211,9 @@ public class MainProject {
 				}
 			}
 			if(currState == State.LightLocalizing){
-				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValue, colorData);
-				lightLocalizer.localize(position);
+				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
+						colorDataRight);
+				lightLocalizer.localize();
 				setState(State.Navigating);
 			}
 

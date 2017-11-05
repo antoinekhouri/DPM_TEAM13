@@ -1,15 +1,14 @@
 package ca.mcgill.ecse211.project13;
 
 
+import ca.mcgill.ecse211.project13.UltrasonicController;	
 import lejos.hardware.Sound;
 
-/**
- * This is the class used to implement ultrasonic localization before light localization takes place.
- */
+
 public class UltrasonicLocalizer implements UltrasonicController {
 
 	public static double distance;
-	private static final int ROTATE_SPEED = 100;
+	private static final int ROTATE_SPEED = 60;
 	private boolean isFallingEdge;
 	private Odometer odometer;
 	private static int k = 1;
@@ -46,7 +45,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param odometer Odometer used to get information about the robot's current position
 	 * @param position Position the robot is placed at (0-1-2-3)
 	 */
-	public UltrasonicLocalizer(boolean isFallingEdge, Odometer odometer, int position){
+	public UltrasonicLocalizer(boolean isFallingEdge, Odometer odometer){
 		this.isFallingEdge = isFallingEdge;
 		this.odometer = odometer;
 		this.position = position;
@@ -59,14 +58,19 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	public static void fallingEdge(Odometer odometer, double distance){
 		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
 	    MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+	    
+//	    MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
+//    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), false);
 
 	    if(distance<d+k && !isAlphaOneSet){
 	    	alpha1 = odometer.getTheta();
+	    	Sound.beep();
 	    	isAlphaOneSet = true;
 	    }
 	    
 	    if(distance<d-k && isAlphaOneSet && !isAlpha2Set){
 	    	alpha2 = odometer.getTheta();
+	    	Sound.beep();
 	    	isAlpha2Set = true;
 	    }
 	      
@@ -86,11 +90,13 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    if(distance<d+k && isFirstTurnDone && !isBeta1Set){
 	    	beta1 = odometer.getTheta();
 	    	isBeta1Set = true;
+	    	Sound.beep();
 	    }
 	      
 	    if(distance<d-k && isBeta1Set && !isBeta2Set){
 	    	beta2 = odometer.getTheta();
 	    	isBeta2Set = true;
+	    	Sound.beep();
 	    }
 	   	  
 	    if(isBeta1Set && isBeta2Set){
@@ -106,10 +112,10 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    
 	    if(isAlphaSet && isBetaSet){
 	    	if(alpha<beta){
-	    		dTheta = 0- (alpha+beta)/2;
+	    		dTheta = -45- (alpha+beta)/2;
 	    		isdThetaSet = true;
 	    	} else {
-	    		dTheta = 170- (alpha+beta)/2;
+	    		dTheta = 130- (alpha+beta)/2;
 	   			isdThetaSet = true;
 	   		  }
 	   	 }	   	  	   	  
