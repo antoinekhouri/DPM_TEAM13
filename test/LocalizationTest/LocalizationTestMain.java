@@ -22,8 +22,7 @@ public class LocalizationTestMain {
 	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	  public static final EV3LargeRegulatedMotor rightMotor =
 	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	  public static final EV3LargeRegulatedMotor pulleyMotor =
-	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+
 	  
 	  public static void main(String[] args){
 		  
