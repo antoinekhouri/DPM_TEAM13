@@ -11,58 +11,69 @@ import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
 public class NavigationTestMain {
-	  public static final double WHEEL_RADIUS = 2.1;
-	  public static final double TRACK = 9.7;
-	  private static final Port usPort = LocalEV3.get().getPort("S1");
-	  private static final Port lsPort = LocalEV3.get().getPort("S2");
-	  public static final EV3LargeRegulatedMotor leftMotor =
-	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
-	  public static final EV3LargeRegulatedMotor rightMotor =
-	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	  public static final EV3LargeRegulatedMotor pulleyMotor =
-	      new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-	  
-	  public static void main(String[] args){
-			 	
-		  		int buttonChoice;
+	public static final double WHEEL_RADIUS = 2.1;
+	public static final double TRACK = 9.1;
+	private static final Port usPort = LocalEV3.get().getPort("S1");
+	private static final Port lsPort = LocalEV3.get().getPort("S2");
+	public static final EV3LargeRegulatedMotor leftMotor =
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+	public static final EV3LargeRegulatedMotor rightMotor =
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
+	public static final EV3LargeRegulatedMotor pulleyMotor =
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
-			    final TextLCD t = LocalEV3.get().getTextLCD();
-			    @SuppressWarnings("resource")
-				SensorModes usSensor = new EV3UltrasonicSensor(usPort);
-				final SampleProvider usDistance = usSensor.getMode("Distance");
-				float[] usData = new float[usDistance.sampleSize()];
-			    final Odometer odometer = new Odometer(leftMotor, rightMotor);
-			    OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-			    
-			    
+	public static void main(String[] args){
 
-			    do {
-			      // clear the display
-			      t.clear();
+		int buttonChoice;
+
+		final TextLCD t = LocalEV3.get().getTextLCD();
+		@SuppressWarnings("resource")
+		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
+		final SampleProvider usDistance = usSensor.getMode("Distance");
+		float[] usData = new float[usDistance.sampleSize()];
+		final Odometer odometer = new Odometer(leftMotor, rightMotor);
+		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 
 
-			      t.drawString("< Left ", 0, 0);
-			      t.drawString(" start ", 0, 1);
+
+		do {
+			// clear the display
+			t.clear();
 
 
-			      buttonChoice = Button.waitForAnyPress();
-			    } while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT && buttonChoice!=
-			    		Button.ID_ESCAPE);
-			    if(buttonChoice == Button.ID_ESCAPE){
-			    	System.exit(0);
-			    }
-			    if(buttonChoice == Button.ID_LEFT || buttonChoice == Button.ID_RIGHT){
-			    	      
-			    	      Navigation navigation = new Navigation(true);
-			    	      UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, navigation);
-			    	      usPoller.start();
-			    	      leftMotor.forward();
-			    	      leftMotor.flt();
-			    	      rightMotor.forward();
-			    	      rightMotor.flt();
+			t.drawString("< Left ", 0, 0);
+			t.drawString(" start ", 0, 1);
 
-			    	      odometer.start();
-			    	      odometryDisplay.start();
-			    }
-	  }
+
+			buttonChoice = Button.waitForAnyPress();
+		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT && buttonChoice!=
+				Button.ID_ESCAPE);
+		if(buttonChoice == Button.ID_ESCAPE){
+			System.exit(0);
+		}
+		if(buttonChoice == Button.ID_LEFT || buttonChoice == Button.ID_RIGHT){
+
+
+			leftMotor.forward();
+			leftMotor.flt();
+			rightMotor.forward();
+			rightMotor.flt();
+
+			odometer.start();
+			odometryDisplay.start();
+			final Navigation nav = new Navigation();
+			UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, nav);
+			usPoller.start();
+			Thread move = new Thread() {
+				/**
+				 * Definition of the navigation thread
+				 */
+				public void run() {
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 4,
+							5);
+				}
+
+			};
+		}
+	}
 }

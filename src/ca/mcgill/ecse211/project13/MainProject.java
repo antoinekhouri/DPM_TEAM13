@@ -42,7 +42,7 @@ public class MainProject {
 	}
 	public static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 6.9;
+	public static final double TRACK = 9.1;
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
@@ -111,7 +111,7 @@ public class MainProject {
 	    SampleProvider colorValueRight = colorSensorRight.getMode("Red");
 	    float[] colorDataRight = new float[3];
 
-		//    LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValue, colorData);
+		//  LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValue, colorData);
 		int position = 4;
 
 		// have the user select the starting position of the robot using the buttons on the brick

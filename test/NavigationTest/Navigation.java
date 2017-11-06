@@ -29,8 +29,8 @@ public class Navigation implements UltrasonicController {
    * @param isAvoidingWall a boolean that indicates whether or not the system will require to avoid a wall
    * @return nothing
    */
-  public Navigation(boolean isAvoidingWall) {
-    this.isAvoidingWall = isAvoidingWall;
+  public Navigation() {
+    this.isAvoidingWall = true;
   }
   /**
    * This method calculates the minimum angle to turn in order to face the destination,
@@ -47,7 +47,7 @@ public class Navigation implements UltrasonicController {
    * @param yC zip line start y coordinate
    */
   public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
-      double rightRadius, double width, double x0, double y0, double xC, double yC) {
+      double rightRadius, double width, double x0, double y0) {
 
 
     double xDistance = x0 * tileLength - odometer.getX();
@@ -90,59 +90,7 @@ public class Navigation implements UltrasonicController {
 
     NavigationTestMain.leftMotor.rotate(convertDistance(leftRadius, Math.abs(yDistance)), true);
     NavigationTestMain.rightMotor.rotate(convertDistance(rightRadius, Math.abs(yDistance)), false);
-
-    if ((Math.abs(xC * tileLength - odometer.getX())) < 10) {
-      if (yC * tileLength - odometer.getY() > 0) {
-        theta = 0;
-        turnTo(theta, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      } else {
-        theta = 180;
-        turnTo(theta, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      }
-    } else if (Math.abs((yC * tileLength - odometer.getY())) < 10) {
-      if (xC * tileLength > odometer.getX()) {
-        theta = 90;
-        turnTo(theta, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      } else {
-        theta = 270;
-        turnTo(theta, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      }
-
-    } else {
-
-      // if the x and y error is large it will change the angle of the robot
-      if (yC * tileLength > odometer.getY()) {
-        turnTo(
-            Math.toDegrees(Math
-                .atan((xC * tileLength - odometer.getX()) / (yC * tileLength - odometer.getY()))),
-            odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      } else if (xC * tileLength < odometer.getX()) {
-        turnTo((-1)
-            * Math.toDegrees(Math
-                .atan((yC * tileLength - odometer.getY()) / (xC * tileLength - odometer.getX())))
-            - 90, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      } else {
-        turnTo((-1)
-            * Math.toDegrees(Math
-                .atan((yC * tileLength - odometer.getY()) / (xC * tileLength - odometer.getX())))
-            + 90, odometer, leftRadius, rightRadius, width);
-        NavigationTestMain.leftMotor.stop(true);
-        NavigationTestMain.rightMotor.stop(true);
-      }
-
-    }
+    
   }
 
   /**
