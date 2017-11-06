@@ -40,6 +40,7 @@ public class MainProject {
 		FlagFound,
 		Done
 	}
+	//main
 	public static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 6.9;
