@@ -2,6 +2,7 @@ package AvoidTest;
 
 import NavigationTest.Navigation;
 import NavigationTest.Odometer;
+import NavigationTest.UltrasonicPoller;
 import NavigationTest.OdometryDisplay;
 import ca.mcgill.ecse211.project13.MainProject;
 import lejos.hardware.Button;
@@ -25,6 +26,10 @@ public class AvoidTestMain {
 
 	public static final double WHEEL_RADIUS = 2.2;
 	public static final double TRACK = 14.3;
+	private static SampleProvider colorSensorLeft;
+	private float[] colorDataLeft;
+	private SampleProvider colorSensorRight;
+	private static float[] colorDataRight;
 
 	// the coordinate for the next way point
 	public static double nextX = 0;
@@ -41,7 +46,7 @@ public class AvoidTestMain {
 		final TextLCD t = LocalEV3.get().getTextLCD();
 		Odometer odometer = new Odometer(leftMotor, rightMotor);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-		final Navigation navigation = new Navigation();
+		final Navigation navigation = new Navigation(colorSensorLeft, colorDataRight, colorSensorLeft, colorDataRight);
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort); // usSensor is the instance
 		SampleProvider usDistance = usSensor.getMode("Distance"); // usDistance provides samples from
@@ -63,7 +68,7 @@ public class AvoidTestMain {
 					nextY = path[i][1];
 					// store the next way point
 					navigation.travelTo(usDistance, odometer, (double)MainProject.WHEEL_RADIUS, (double)MainProject.WHEEL_RADIUS, (double)MainProject.TRACK, (double)MainProject.X0_final,
-							(double)MainProject.Y0_final);
+							(double)MainProject.Y0_final, uspoller);
 				
 
 			}

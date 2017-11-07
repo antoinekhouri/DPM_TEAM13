@@ -1,6 +1,9 @@
 package AvoidTest;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import NavigationTest.UltrasonicPoller;
+import NavigationTest.UltrasonicController;
+
 
 public class PControllerTest implements UltrasonicController {
 

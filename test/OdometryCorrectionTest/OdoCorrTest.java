@@ -1,5 +1,7 @@
 package OdometryCorrectionTest;
 
+import NavigationTest.Navigation;
+import NavigationTest.UltrasonicPoller;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.port.Port;
@@ -29,7 +31,13 @@ public class OdoCorrTest extends Thread{
 	    this.odometer = odometer;
 	  }
 
-	  // run method (required for Thread)
+	  public OdoCorrTest(NavigationTest.Odometer odometer2, SampleProvider colorValueLeft, float[] colorDataLeft,
+			SampleProvider colorValueRight, float[] colorDataRight, Navigation nav, UltrasonicPoller usPoller,
+			SampleProvider usDistance) {
+		
+	}
+
+	// run method (required for Thread)
 	  public void run() {
 	    long correctionStart, correctionEnd;
 

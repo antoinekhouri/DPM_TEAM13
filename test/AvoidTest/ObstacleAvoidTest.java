@@ -8,6 +8,9 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import NavigationTest.Navigation;
 import NavigationTest.Odometer;
 import ca.mcgill.ecse211.project13.MainProject;
+import NavigationTest.UltrasonicPoller;
+import NavigationTest.UltrasonicController;
+
 		
 public class ObstacleAvoidTest extends Thread{
 
@@ -27,8 +30,8 @@ public class ObstacleAvoidTest extends Thread{
 			float[] usData = new float[usDistance.sampleSize()];
 
 			
-			public ObstacleAvoidTest(Navigation navigation, Odometer odometer, UltrasonicPoller usPoller) {
-				this.usPoller = usPoller; 
+			public ObstacleAvoidTest(Navigation navigation, Odometer odometer, NavigationTest.UltrasonicPoller uspoller2) {
+				this.usPoller = uspoller2; 
 				this.navigation = navigation; 
 				this.odometer = odometer; 
 				
@@ -46,7 +49,7 @@ public class ObstacleAvoidTest extends Thread{
 						avoid(); 
 						//after going through the block, resume navigating to its destination 
 						navigation.travelTo(usDistance, odometer, (double)MainProject.WHEEL_RADIUS, (double)MainProject.WHEEL_RADIUS, (double)MainProject.TRACK, (double)MainProject.X0_final,
-								(double)MainProject.Y0_final); 
+								(double)MainProject.Y0_final, usPoller); 
 						}
 				}
 			}

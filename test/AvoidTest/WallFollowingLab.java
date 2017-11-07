@@ -6,6 +6,9 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
 import lejos.robotics.SampleProvider;
 import lejos.hardware.Button;
+import NavigationTest.UltrasonicPoller;
+import NavigationTest.UltrasonicController;
+
 
 public class WallFollowingLab {
 

@@ -5,6 +5,8 @@ package NavigationTest;
 
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
+import NavigationTest.UltrasonicPoller;
+
 
 public class Navigation implements UltrasonicController {
 	// Constants and variables
@@ -66,7 +68,7 @@ public class Navigation implements UltrasonicController {
 	 * @param yC zip line start y coordinate
 	 */
 	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
-			double rightRadius, double width, double x0, double y0, UltrasonicPoller usPoller) {
+			double rightRadius, double width, double x0, double y0, UltrasonicPoller uspoller) {
 		double xDistance = x0 * tileLength - odometer.getX();
 		double yDistance = y0 * tileLength - odometer.getY();
 		while(!isDoneWithY){
