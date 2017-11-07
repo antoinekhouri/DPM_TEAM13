@@ -15,19 +15,14 @@ public class ObstacleAvoidance extends Thread{
 		private Navigation navigation;  
 		private static final int FORWARD_SPEED = 185;
 		private static final int FORWARD_SPEED_Right = 185;
+		private SampleProvider usDistance;
 		
-		//is the following gonna work?
-		@SuppressWarnings("resource")
-		SensorModes usSensor = new EV3UltrasonicSensor(MainProject.usPort);
-		final SampleProvider usDistance = usSensor.getMode("Distance");
-		float[] usData = new float[usDistance.sampleSize()];
-
-		
-		public ObstacleAvoidance(Navigation navigation, Odometer odometer, UltrasonicPoller usPoller) {
+		public ObstacleAvoidance(Navigation navigation, Odometer odometer, UltrasonicPoller usPoller, SampleProvider usDistance) {
 			this.usPoller = usPoller; 
 			this.navigation = navigation; 
 			this.odometer = odometer; 
-			
+			this.usDistance = usDistance;
+
 		}
 		
 		public void run() {
