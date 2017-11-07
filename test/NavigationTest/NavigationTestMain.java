@@ -1,7 +1,6 @@
 package NavigationTest;
 
 
-import OdometryCorrectionTest.OdoCorrTest;
 import lejos.hardware.Button;	
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
@@ -14,7 +13,7 @@ import lejos.robotics.SampleProvider;
 
 public class NavigationTestMain {
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.45;
+	public static final double TRACK = 9.35;
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -86,7 +85,7 @@ public class NavigationTestMain {
 				 * Definition of the navigation thread
 				 */
 				public void run() {
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 3,
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2,
 							3, usPoller);
 				}
 
