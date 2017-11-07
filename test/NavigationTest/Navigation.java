@@ -162,6 +162,11 @@ public class Navigation implements UltrasonicController {
 
 //			}
 			if(isLeftSensor || isRightSensor){
+				isReady =true;
+				isLeftSensor = false;
+				isRightSensor =false;
+			}
+			if(isReady){
 
 				
 				if(!isDoneWithX){
@@ -188,10 +193,7 @@ public class Navigation implements UltrasonicController {
 						NavigationTestMain.leftMotor.stop(true);
 					}
 				}
-				
-				
-				isLeftSensor = false;
-				isRightSensor = false;
+
 				
 			}
 

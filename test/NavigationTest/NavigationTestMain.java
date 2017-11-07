@@ -47,6 +47,7 @@ public class NavigationTestMain {
 		float[] usData = new float[usDistance.sampleSize()];
 		final Odometer odometer = new Odometer(leftMotor, rightMotor);
 		final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
+		final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 		final UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, nav);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 		
@@ -92,7 +93,7 @@ public class NavigationTestMain {
 			};
 			Thread move2 = new Thread() {
 				public void run() {
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2, 1, usPoller);
+					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2, 1, usPoller);
 				}
 			};
 			move.start();
