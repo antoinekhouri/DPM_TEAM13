@@ -165,13 +165,22 @@ public class Navigation implements UltrasonicController {
 
 				
 				if(!isDoneWithX){
-					xCounter++;
+					if(Math.abs(odometer.getTheta()-90)<10){
+						xCounter++;
+					}
+					else if(Math.abs(odometer.getTheta()-270)<10){
+						xCounter--;
+					}
 					odometer.setX(xCounter*tileLength);
 					if(xCounter==x0){
 						isDoneWithX = true;
 					}
 				}else if (isDoneWithX && !isDoneWithY){
-					yCounter++;
+					if(Math.abs(odometer.getTheta())<10){
+						yCounter++;
+					}else if(Math.abs(odometer.getTheta()-180)<10){
+						yCounter--;
+					}
 					odometer.setY(yCounter*tileLength);
 					if(yCounter==y0){
 						isDoneWithY = true;

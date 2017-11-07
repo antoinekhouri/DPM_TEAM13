@@ -14,7 +14,7 @@ import lejos.robotics.SampleProvider;
 
 public class NavigationTestMain {
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.35;
+	public static final double TRACK = 9.45;
 	private static final Port usPort = LocalEV3.get().getPort("S1");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
@@ -26,7 +26,7 @@ public class NavigationTestMain {
 	static Port lsPortRight = LocalEV3.get().getPort("S4");
 
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws InterruptedException{
 		
 
 		@SuppressWarnings("resource")
@@ -86,14 +86,21 @@ public class NavigationTestMain {
 				 * Definition of the navigation thread
 				 */
 				public void run() {
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2,
-							2, usPoller);
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 3,
+							3, usPoller);
 				}
 
 			};
+			Thread move2 = new Thread() {
+				public void run() {
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2, 1, usPoller);
+				}
+			};
 			move.start();
-			OdoCorrTest odometryCorrection = new OdoCorrTest(odometer, colorValueLeft, colorDataLeft
-					, colorValueRight, colorDataRight, nav, usPoller, usDistance);
+			move2.start();
+			move2.join();
+//			OdoCorrTest odometryCorrection = new OdoCorrTest(odometer, colorValueLeft, colorDataLeft
+//					, colorValueRight, colorDataRight, nav, usPoller, usDistance);
 //			odometryCorrection.start();
 			
 		} while(Button.waitForAnyPress() != Button.ID_ESCAPE);
