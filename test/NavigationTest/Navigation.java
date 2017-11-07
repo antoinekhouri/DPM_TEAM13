@@ -16,8 +16,8 @@ public class Navigation implements UltrasonicController {
 	private static final double tileLength = 30.48;
 	private double minDistance = 0;
 	private Odometer odometer;
-	 
-	
+
+
 	double tileWidth = 30.48;
 
 	private boolean isLeftSensor = false;
@@ -36,8 +36,8 @@ public class Navigation implements UltrasonicController {
 	private  boolean isTurning;
 	private boolean isReady= false;
 	private boolean isDoneWithX = false;
-	private int xCounter = 0;
-	private int yCounter = 0;
+	private int xCounter = 0;;
+	private int yCounter =  0;
 	private boolean isDoneWithY = false;
 	/** 
 	 * This constructor is simply used in order to indicate to the system whether or not it will
@@ -52,6 +52,7 @@ public class Navigation implements UltrasonicController {
 		this.colorDataLeft = colorDataLeft;
 		this.colorSensorRight = colorSensorRight;
 		this.colorDataRight = colorDataRight;
+
 	}
 	/**
 	 * This method calculates the minimum angle to turn in order to face the destination,
@@ -71,8 +72,10 @@ public class Navigation implements UltrasonicController {
 			double rightRadius, double width, double x0, double y0, UltrasonicPoller uspoller) {
 		double xDistance = x0 * tileLength - odometer.getX();
 		double yDistance = y0 * tileLength - odometer.getY();
+		this.xCounter = (int) (odometer.getX()/tileWidth);
+		this.yCounter = (int) (odometer.getY()/tileWidth);
 		while(!isDoneWithY){
-			
+
 			NavigationTestMain.leftMotor.setSpeed(ROTATE_SPEED);
 			NavigationTestMain.rightMotor.setSpeed(FORWARD_SPEED_Right);
 			if(!isDoneWithX){
@@ -109,7 +112,7 @@ public class Navigation implements UltrasonicController {
 
 			NavigationTestMain.leftMotor.forward();
 			NavigationTestMain.rightMotor.forward();
-			
+
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e1) {
@@ -126,41 +129,41 @@ public class Navigation implements UltrasonicController {
 			}
 
 
-			
+
 			if(getColorDataLeft() < lightDensity ){
-//				NavigationTestMain.leftMotor.setSpeed(0);					
+				//              NavigationTestMain.leftMotor.setSpeed(0);                   
 				isLeftSensor = true;
 				Sound.beep();
-				while(getColorDataRight() > lightDensity){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				//                while(getColorDataRight() > lightDensity){
+				//                    try {
+				//                        Thread.sleep(1);
+				//                    } catch (InterruptedException e) {
+				//                        // TODO Auto-generated catch block
+				//                        e.printStackTrace();
+				//                    }
+				//                }
 				Sound.beep();
-//				NavigationTestMain.rightMotor.setSpeed(0);
+				//              NavigationTestMain.rightMotor.setSpeed(0);
 				isRightSensor = true;
 			}
 			else if(getColorDataRight()< lightDensity){
-//				NavigationTestMain.rightMotor.setSpeed(0);
+				//              NavigationTestMain.rightMotor.setSpeed(0);
 				isRightSensor = true;
 				Sound.beep();
-				while(getColorDataLeft() > lightDensity){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				//                while(getColorDataLeft() > lightDensity){
+				//                    try {
+				//                        Thread.sleep(1);
+				//                    } catch (InterruptedException e) {
+				//                        // TODO Auto-generated catch block
+				//                        e.printStackTrace();
+				//                    }
+				//                }
 				Sound.beep();
-//				NavigationTestMain.leftMotor.setSpeed(0);
+				//              NavigationTestMain.leftMotor.setSpeed(0);
 				isLeftSensor = true;
 			}
 
-//			}
+			//          }
 			if(isLeftSensor || isRightSensor){
 				isReady =true;
 				isLeftSensor = false;
@@ -168,7 +171,7 @@ public class Navigation implements UltrasonicController {
 			}
 			if(isReady){
 
-				
+
 				if(!isDoneWithX){
 					if(Math.abs(odometer.getTheta()-90)<10){
 						xCounter++;
@@ -194,14 +197,14 @@ public class Navigation implements UltrasonicController {
 					}
 				}
 
-				
+
 			}
 
 
 		}
-		
 
-	
+
+
 
 	}
 

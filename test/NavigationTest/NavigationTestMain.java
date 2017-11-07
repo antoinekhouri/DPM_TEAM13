@@ -1,7 +1,7 @@
 package NavigationTest;
 
 
-import lejos.hardware.Button;	
+import lejos.hardware.Button;   
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -26,7 +26,7 @@ public class NavigationTestMain {
 
 
 	public static void main(String[] args) throws InterruptedException{
-		
+
 
 		@SuppressWarnings("resource")
 		SensorModes colorSensorLeft = new EV3ColorSensor(lsPortLeft);
@@ -37,9 +37,9 @@ public class NavigationTestMain {
 		SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
 		SampleProvider colorValueRight = colorSensorRight.getMode("Red");
 		float[] colorDataRight = new float[3];
-		
+
 		int buttonChoice;
-		
+
 		final TextLCD t = LocalEV3.get().getTextLCD();
 		@SuppressWarnings("resource")
 		SensorModes usSensor = new EV3UltrasonicSensor(usPort);
@@ -50,7 +50,7 @@ public class NavigationTestMain {
 		final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 		final UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, nav);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
-		
+
 
 
 		do {
@@ -75,11 +75,11 @@ public class NavigationTestMain {
 			leftMotor.flt();
 			rightMotor.forward();
 			rightMotor.flt();
-			
+
 			odometer.start();
 			odometryDisplay.start();
-			
-			
+
+
 			usPoller.start();
 			Thread move = new Thread() {
 				/**
@@ -87,22 +87,22 @@ public class NavigationTestMain {
 				 */
 				public void run() {
 					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2,
-							3, usPoller);
+							2, usPoller);
 				}
 
 			};
 			Thread move2 = new Thread() {
 				public void run() {
-					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2, 1, usPoller);
+					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 1, 1, usPoller);
 				}
 			};
 			move.start();
-			move2.start();
-			move2.join();
-//			OdoCorrTest odometryCorrection = new OdoCorrTest(odometer, colorValueLeft, colorDataLeft
-//					, colorValueRight, colorDataRight, nav, usPoller, usDistance);
-//			odometryCorrection.start();
-			
+			//            move2.start();
+			//            move2.join();
+			//          OdoCorrTest odometryCorrection = new OdoCorrTest(odometer, colorValueLeft, colorDataLeft
+			//                  , colorValueRight, colorDataRight, nav, usPoller, usDistance);
+			//          odometryCorrection.start();
+
 		} while(Button.waitForAnyPress() != Button.ID_ESCAPE);
 		System.exit(0);
 	}
