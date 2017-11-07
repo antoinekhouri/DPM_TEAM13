@@ -24,7 +24,7 @@ public class Navigation implements UltrasonicController {
 
   private Odometer odometer;
   private static final Port usPort = LocalEV3.get().getPort("S2");
-  private static final double pulley_to_roborCenter = 1.3;
+  private static final double pulley_to_robotCenter = 1.3;
   private boolean isAvoidingWall;
   private double wallDistance;
   private double theta;
@@ -91,7 +91,7 @@ public class Navigation implements UltrasonicController {
       turnTo(180, odometer, leftRadius, rightRadius, width);
     }
     // -1.3 since our pulley is not exactly at the robot center
-    yDistance = yDistance - pulley_to_roborCenter;
+    yDistance = yDistance - pulley_to_robotCenter;
     MainProject.leftMotor.setSpeed(FORWARD_SPEED);
     MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
 

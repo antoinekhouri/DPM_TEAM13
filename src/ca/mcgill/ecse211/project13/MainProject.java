@@ -44,7 +44,7 @@ public class MainProject {
 	public static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 9.1;
-	private static final Port usPort = LocalEV3.get().getPort("S1");
+	public static final Port usPort = LocalEV3.get().getPort("S1");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
 	public static final EV3LargeRegulatedMotor leftMotor =
@@ -53,6 +53,10 @@ public class MainProject {
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 	public static final EV3LargeRegulatedMotor pulleyMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+	// the motor to rotate the sensor
+		public static final EV3LargeRegulatedMotor sMotor = 
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+
 	public static int X0_final = 0;
 	public static int Y0_final = 0;
 	public static int XC_final = 0;
