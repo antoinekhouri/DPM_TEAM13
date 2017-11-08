@@ -53,7 +53,7 @@ public class AvoidTestMain {
 																	// this instance
 		float[] usData = new float[usDistance.sampleSize()];
 		UltrasonicPoller uspoller = new UltrasonicPoller(usDistance, usData);
-		ObstacleAvoidTest avoid = new ObstacleAvoidTest(navigation, odometer, uspoller);
+		ObstacleAvoidTest avoid = new ObstacleAvoidTest(navigation, odometer, uspoller, usDistance);
 
 		do {
 			// clear the display

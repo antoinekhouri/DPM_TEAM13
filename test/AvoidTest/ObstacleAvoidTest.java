@@ -19,21 +19,17 @@ public class ObstacleAvoidTest extends Thread{
 			private final int bandCenter = 10; 
 			private Odometer odometer; 
 			private UltrasonicPoller usPoller; 
-			private Navigation navigation;  
+			private Navigation navigation;
+			private SampleProvider usDistance;  
 			private static final int FORWARD_SPEED = 185;
 			private static final int FORWARD_SPEED_Right = 185;
+	
 			
-			//is the following gonna work?
-			@SuppressWarnings("resource")
-			SensorModes usSensor = new EV3UltrasonicSensor(MainProject.usPort);
-			final SampleProvider usDistance = usSensor.getMode("Distance");
-			float[] usData = new float[usDistance.sampleSize()];
-
-			
-			public ObstacleAvoidTest(Navigation navigation, Odometer odometer, NavigationTest.UltrasonicPoller uspoller2) {
+			public ObstacleAvoidTest(Navigation navigation, Odometer odometer, NavigationTest.UltrasonicPoller uspoller2, SampleProvider usDistance) {
 				this.usPoller = uspoller2; 
 				this.navigation = navigation; 
 				this.odometer = odometer; 
+				this.usDistance = usDistance;
 				
 			}
 			
