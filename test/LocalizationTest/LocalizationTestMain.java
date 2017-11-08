@@ -15,7 +15,7 @@ import lejos.robotics.SampleProvider;
 public class LocalizationTestMain {
 	  public static final double WHEEL_RADIUS = 2.1;
 	  public static final double TRACK = 9.1;
-	  private static final Port usPort = LocalEV3.get().getPort("S1");
+	  private static final Port usPort = LocalEV3.get().getPort("S3");
 	  private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	  private static final Port lsPortRight = LocalEV3.get().getPort("S4");
 	  public static final EV3LargeRegulatedMotor leftMotor =

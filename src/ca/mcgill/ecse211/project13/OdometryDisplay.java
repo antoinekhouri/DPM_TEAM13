@@ -44,6 +44,7 @@ public class OdometryDisplay extends Thread {
       t.drawString("X:              ", 0, 0);
       t.drawString("Y:              ", 0, 1);
       t.drawString("T:              ", 0, 2);
+      t.drawString(MainProject.getState(), 0, 3);
       // t.drawString("" + , 0, 3);
 
       // get the odometry information

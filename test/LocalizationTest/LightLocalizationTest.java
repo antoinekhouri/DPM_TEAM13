@@ -177,60 +177,7 @@ public class LightLocalizationTest {
 			isLeftSensor = true;
 			Sound.beep();
 		}
-		if(isRightSensor && isLeftSensor){
-			LocalizationTestMain.leftMotor.setSpeed(ROTATION_SPEED);
-			LocalizationTestMain.rightMotor.setSpeed(ROTATION_SPEED);
-			LocalizationTestMain.leftMotor.backward();
-			LocalizationTestMain.rightMotor.forward();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				
-				e1.printStackTrace();
-			}
-			while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
-				//try-catch from ultrasonic poller
 
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					//Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			//reached a black line so stop
-			if(getColorDataLeft() < lightDensity ){
-				LocalizationTestMain.leftMotor.stop(true);
-				isLeftSensor = true;
-				Sound.beep();
-				while(getColorDataRight()>lightDensity){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						//Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				LocalizationTestMain.rightMotor.stop(true);
-			}
-			else if(getColorDataRight()< lightDensity){
-				LocalizationTestMain.rightMotor.stop(true);
-				isRightSensor = true;
-				Sound.beep();
-				while(getColorDataLeft()>lightDensity){
-					try {
-						Thread.sleep(1);
-					} catch (InterruptedException e) {
-						//Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				LocalizationTestMain.leftMotor.stop(true);
-			}
-			
-
-		}
 
 		odometer.setX(0);
 		odometer.setY(0);

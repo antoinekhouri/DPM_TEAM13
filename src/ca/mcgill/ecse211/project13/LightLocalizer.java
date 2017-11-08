@@ -14,7 +14,7 @@ public class LightLocalizer {
 	 * we tested with different values and found that our sensor recognizes the black lines at 0.2 and below 
 	 */
 	private static double lightDensity = 0.40;
-
+	private int position;
 	private Odometer odometer;
 	private SampleProvider colorSensorLeft;
 	private float[] colorDataLeft;
@@ -24,10 +24,10 @@ public class LightLocalizer {
 	private boolean isLeftSensor = false;
 	private boolean isRightSensor = false;
 	private boolean isDone = false;
-	private int position;
 	private int finalX;
 	private int finalY;
 	private int finalTheta;
+	private boolean isZipLineLocalization = false;
 	// private EV3LargeRegulatedMotor MainProject.leftMotor, MainProject.rightMotor;
 	/**
 	 * Default constructor
@@ -36,14 +36,14 @@ public class LightLocalizer {
 	 * @param colorData Buffer used to store the light sensor's data
 	 */
 	public LightLocalizer(Odometer odometer, SampleProvider colorSensorLeft, float[] colorDataLeft, 
-			SampleProvider colorSensorRight, float[] colorDataRight)
-	//EV3LargeRegulatedMotor MainProject.leftMotor, EV3LargeRegulatedMotor MainProject.rightMotor) 
+			SampleProvider colorSensorRight, float[] colorDataRight, int position) 
 	{
 		this.odometer = odometer;
 		this.colorSensorLeft = colorSensorLeft;
 		this.colorDataLeft = colorDataLeft;
 		this.colorSensorRight = colorSensorRight;
 		this.colorDataRight = colorDataRight;
+		this.position = position;
 		//this.MainProject.leftMotor = MainProject.leftMotor;
 		//this.MainProject.rightMotor = MainProject.rightMotor;
 
@@ -51,14 +51,43 @@ public class LightLocalizer {
 		MainProject.rightMotor.setAcceleration(ACCELERATION);
 
 	}
-
+	public LightLocalizer(Odometer odometer, SampleProvider colorSensorLeft, float[] colorDataLeft, 
+			SampleProvider colorSensorRight, float[] colorDataRight, int x, int y) 
+	{
+		this.odometer = odometer;
+		this.colorSensorLeft = colorSensorLeft;
+		this.colorDataLeft = colorDataLeft;
+		this.colorSensorRight = colorSensorRight;
+		this.colorDataRight = colorDataRight;
+		this.isZipLineLocalization = true;
+		this.finalX = x;
+		this.finalY = y;
+	}
 	//Localize robot using the light sensor
 	/**
 	 * Localizes the robot the the desired grid line intersection
 	 * @param position 0-1-2-3, the position on the grid where the robot is placed at
 	 */
 	public void localize() {
-		
+		if(!isZipLineLocalization){
+			if(position == 0){
+				finalX = 1;
+				finalY = 1;
+				finalTheta = 0;
+			}else if(position ==1){
+				finalX =11;
+				finalY =1;
+				finalTheta = 0;
+			}else if(position ==2){
+				finalX = 11;
+				finalY = 11;
+				finalTheta = 180;
+			}else{
+				finalX = 1;
+				finalY = 11;
+				finalTheta = 180;
+			}
+		}
 		//	}
 		// set the speeds of the motors and move forward (in the y direction)
 		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
@@ -185,7 +214,7 @@ public class LightLocalizer {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
-				
+
 				e1.printStackTrace();
 			}
 			while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
@@ -228,13 +257,13 @@ public class LightLocalizer {
 				}
 				MainProject.leftMotor.stop(true);
 			}
-			
+
 
 		}
 
-		odometer.setX(0);
-		odometer.setY(0);
-		odometer.setTheta(0);
+		odometer.setX(finalX);
+		odometer.setY(finalY);
+		odometer.setTheta(finalTheta);
 
 	}
 

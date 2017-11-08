@@ -37,7 +37,7 @@ public class ObstacleAvoidance extends Thread{
 					avoid(); 
 					//after going through the block, resume navigating to its destination 
 					navigation.travelTo(usDistance, odometer, MainProject.WHEEL_RADIUS, MainProject.WHEEL_RADIUS, MainProject.TRACK, MainProject.X0_final,
-							MainProject.Y0_final, MainProject.XC_final, MainProject.YC_final); 
+							MainProject.Y0_final, usPoller); 
 					}
 			}
 		}

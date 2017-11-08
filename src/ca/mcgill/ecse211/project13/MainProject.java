@@ -1,13 +1,11 @@
 package ca.mcgill.ecse211.project13;
 
-//import ca.mcgill.ecse211.project13.UltrasonicLocalizer;
-import ca.mcgill.ecse211.project13.UltrasonicPoller;
-import ca.mcgill.ecse211.project13.UltrasonicController;	
+
+import ca.mcgill.ecse211.project13.UltrasonicPoller;		
 import ca.mcgill.ecse211.project13.LightLocalizer;
 import ca.mcgill.ecse211.project13.TraverseZipLine;
 import ca.mcgill.ecse211.project13.UltrasonicLocalizer;
 import ca.mcgill.ecse211.project13.Navigation;
-//import ca.mcgill.ecse211.project13.LightLocalizer;
 import ca.mcgill.ecse211.project13.Odometer;
 import ca.mcgill.ecse211.project13.OdometryDisplay;
 import lejos.hardware.Button;
@@ -20,6 +18,10 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
+
+import java.util.Map;
+
+import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 /**
  * This is the main class that will run the robot. It will run all the threads that are required
  * for the robot to performed the desired actions.
@@ -38,13 +40,14 @@ public class MainProject {
 		FlagSniffing,
 		CrossingBridge,
 		FlagFound,
+		NavigatingBack,
 		Done
 	}
 	//main
-	public static State currState;
+	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 9.1;
-	public static final Port usPort = LocalEV3.get().getPort("S1");
+	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
 	public static final EV3LargeRegulatedMotor leftMotor =
@@ -54,9 +57,23 @@ public class MainProject {
 	public static final EV3LargeRegulatedMotor pulleyMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 	// the motor to rotate the sensor
-		public static final EV3LargeRegulatedMotor sMotor = 
+	public static final EV3LargeRegulatedMotor sMotor = 
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 
+
+	// ** Set these as appropriate for your team and current situation **
+	private static final String SERVER_IP = "192.168.2.9";
+	private static final int TEAM_NUMBER = 13;
+
+	// Enable/disable printing of debug info from the WiFi class
+	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
+	private static int startPosition=4;
+	public static int navX;
+	public static int navY;
+	public static int navBackX;
+	public static int navBackY;
+	public static int zipLineEndX;
+	public static int zipLineEndY;
 	public static int X0_final = 0;
 	public static int Y0_final = 0;
 	public static int XC_final = 0;
@@ -76,17 +93,86 @@ public class MainProject {
 	public static double minDistance;
 	private static final int bandCenter = 25; // Offset from the wall (cm)
 	private static final int bandWidth = 3; // Width of dead band (cm)
+	private static boolean isGreenTeam = false;
 	/**
 	 * Main method containing all the threads
 	 * @param args not used
 	 * @throws InterruptedException throws an interrupted exception if a thread is interrupted
 	 */
-	private static void setState(State s){
+	public static void setState(State s){
 		currState = s;
+	}
+	public static  String getState(){
+		return currState.toString();
 	}
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException {
 
+
+		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+
+		try {
+
+			Map data = conn.getData();
+
+			// Example 1: Print out all received data
+//			System.out.println("Map:\n" + data);
+
+			// Example 2 : Print out specific values
+			
+			int redTeam = ((Long) data.get("RedTeam")).intValue();
+			if(redTeam == 13){
+				isGreenTeam = false;
+			}
+			int greenTeam = ((Long) data.get("GreenTeam")).intValue();
+			if(greenTeam == 13){
+				isGreenTeam = true;
+			}
+			if(isGreenTeam){
+				friendlyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
+				friendlyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
+				friendlyZoneYStart = ((Long) data.get("GreenLL__y")).intValue();
+				friendlyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
+				enemyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
+				enemyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
+				enemyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
+				enemyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
+			}else{
+				friendlyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
+				friendlyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
+				friendlyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
+				friendlyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
+				enemyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
+				enemyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
+				enemyZoneYStart = ((Long) data.get("GreenLL__y")).intValue();
+				enemyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
+			}
+			if(isGreenTeam){
+				startPosition = ((Long) data.get("GreenCorner")).intValue();
+			} else{
+				startPosition = ((Long) data.get("RedCorner")).intValue();
+			}
+			if(isGreenTeam){
+				navX = ((Long) data.get("ZO_G_x")).intValue();
+				navY = ((Long) data.get("ZO_G_y")).intValue();
+				navBackX = ((Long) data.get("SH_LL_x")).intValue();
+				navBackY = ((Long) data.get("SH_LL_y")).intValue();
+ 			}else{
+				navX = ((Long) data.get("SH_LL_x")).intValue();
+				navY = ((Long) data.get("SH_LL_y")).intValue();
+				navBackX = ((Long) data.get("ZO_G_x")).intValue();
+				navBackY = ((Long) data.get("ZO_G_y")).intValue();
+			}
+			XC_final = ((Long) data.get("ZC_G_x")).intValue();
+			YC_final = ((Long) data.get("ZC_G_y")).intValue();
+			zipLineEndX = ((Long) data.get("ZC_R_x")).intValue();
+			zipLineEndY = ((Long) data.get("ZC_R_y")).intValue();
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+
+		// Wait until user decides to end program
+		Button.waitForAnyPress();
 		setState(State.USLocalizing);
 
 		int X0_var = 0;
@@ -98,7 +184,7 @@ public class MainProject {
 		int buttonChoice;
 		final TextLCD t = LocalEV3.get().getTextLCD();
 		final Odometer odometer = new Odometer(leftMotor, rightMotor);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
+		//		OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer, t);
 
 		@SuppressWarnings("resource")
@@ -110,94 +196,29 @@ public class MainProject {
 		SensorModes colorSensorLeft = new EV3ColorSensor(lsPortLeft);
 		SampleProvider colorValueLeft = colorSensorLeft.getMode("Red");
 		float[] colorDataLeft = new float[3];
-		
+
 		@SuppressWarnings("resource")
 		SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
-	    SampleProvider colorValueRight = colorSensorRight.getMode("Red");
-	    float[] colorDataRight = new float[3];
+		SampleProvider colorValueRight = colorSensorRight.getMode("Red");
+		float[] colorDataRight = new float[3];
 
-		//  LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValue, colorData);
 		int position = 4;
 
-		// have the user select the starting position of the robot using the buttons on the brick
-
 		do {
 			t.clear();
-			t.drawString(" < Left   |   Right >", 0, 0);
-			t.drawString("          |        ", 0, 1);
-			t.drawString(" 0        |   1  ", 0, 2);
-			t.drawString("          |        ", 0, 3);
-			t.drawString("Up        |   Down    ", 0, 4);
-			t.drawString("          |    ", 0, 5);
-			t.drawString("2         |   3 ", 0, 6);
-			buttonChoice = Button.waitForAnyPress();
-		} while (buttonChoice != Button.ID_LEFT && buttonChoice != Button.ID_RIGHT
-				&& buttonChoice != Button.ID_UP && buttonChoice != Button.ID_DOWN);
-		if (buttonChoice == Button.ID_LEFT) {
-			position = 0;
-		} else if (buttonChoice == Button.ID_RIGHT) {
-			position = 1;
-		} else if (buttonChoice == Button.ID_UP) {
-			position = 2;
-		} else if (buttonChoice == Button.ID_DOWN) {
-			position = 3;
-		}
-
-
-		// have the user select the coordinates of X0, Y0 by using the right button to increase X
-		// and the up button to increase Y. They must click enter to move on to next screen
-		do {
-			t.clear();
-			t.drawString("Enter (X0,Y0) ", 0, 0);
-			t.drawString("          |    ", 0, 1);
-			t.drawString("Press right to ", 0, 2);
-			t.drawString(" increse X ", 0, 3);
-			t.drawString("Press up to ", 0, 4);
-			t.drawString("increse Y ", 0, 5);
-			t.drawString("          |    ", 0, 6);
-			t.drawString("press center to select ", 0, 7);
+			t.drawString("Press Enter ", 0, 0);
+			t.drawString("to start", 0, 1);
 			buttonChoice = Button.waitForAnyPress();
 
-			if (buttonChoice == Button.ID_RIGHT) {
-				X0_var = X0_var + 1;
-			} else if (buttonChoice == Button.ID_UP) {
-				Y0_var = Y0_var + 1;
-			} else if (buttonChoice == Button.ID_ENTER) {
-				X0_final = X0_var;
-				Y0_final = Y0_var;
-			}
 		} while (buttonChoice != Button.ID_ENTER);
-
-		// have the user select the coordinates of XC, YX by using the right button to increase X
-		// and the up button to increase Y. Pressing enter will start ultrasonic localization.
-		do {
-			t.clear();
-			t.drawString("Enter (Xc,Yc) ", 0, 0);
-			t.drawString("          |    ", 0, 1);
-			t.drawString("Press right to ", 0, 2);
-			t.drawString(" increse X ", 0, 3);
-			t.drawString("Press up to ", 0, 4);
-			t.drawString("increse Y ", 0, 5);
-			t.drawString("          |    ", 0, 6);
-			t.drawString("press center to select ", 0, 7);
-			buttonChoice = Button.waitForAnyPress();
-
-			if (buttonChoice == Button.ID_RIGHT) {
-				Xc_var = Xc_var + 1;
-			} else if (buttonChoice == Button.ID_UP) {
-				Yc_var = Yc_var + 1;
-			} else if (buttonChoice == Button.ID_ENTER) {
-				XC_final = Xc_var;
-				YC_final = Yc_var;
-			}
-		} while (buttonChoice != Button.ID_ENTER);
-		while(currState != State.Done){
+		odometer.start();
+		odometryDisplay.start();
+		while(currState != State.Done && buttonChoice !=Button.ID_ESCAPE){
 			UltrasonicLocalizer usLocalizer = new UltrasonicLocalizer(true, odometer);
-			UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, usLocalizer);
+			final UltrasonicPoller usPoller = new UltrasonicPoller(usDistance, usData, usLocalizer);
 			CrossBridge cb = new CrossBridge();
 			final TraverseZipLine trav = new TraverseZipLine(odometer, colorValueLeft, colorDataLeft );
-			odometer.start();
-			odometryDisplay.start();
+
 			// start the odometer and the display
 			if(currState == State.USLocalizing){
 
@@ -217,51 +238,42 @@ public class MainProject {
 			}
 			if(currState == State.LightLocalizing){
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
-						colorDataRight);
+						colorDataRight, startPosition);
 				lightLocalizer.localize();
 				setState(State.Navigating);
 			}
 
-			// start light localization
-			//    lightLocalizer.localize(position);
-
 			// create instance of navigation
-			final Navigation navigation = new Navigation(true);
+			
+
 
 			// set up navigation
 			if(currState == State.Navigating){
 				//TODO: implement proper logic for detecting when to go into avoidance
-				leftMotor.forward();
-				leftMotor.flt();
-				rightMotor.forward();
-				rightMotor.flt();
-				Thread move = new Thread() {
-					/**
-					 * Definition of the navigation thread
-					 */
-					public void run() {
-						navigation.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, X0_final,
-								Y0_final, XC_final, YC_final);
-					}
+				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 
-				};
-				move.start();
+				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, navX,
+						navY, usPoller);
+
+
+
+
 				if(usPoller.getDistance()<minDistance){
 					setState(State.Avoiding);
 				}
-				else if(Math.abs(odometer.getX()-XC_final)<10 && Math.abs(odometer.getY()-YC_final)<10){
+				else if(isGreenTeam){
 					setState(State.Traversing);
-				}else if(Math.abs(odometer.getX()-bridgeX)<10 && Math.abs(odometer.getY()-bridgeY)<10){
+				}else{
 					setState(State.CrossingBridge);
-				}
+				}					
 			}
 			if(currState == State.Traversing){
-				Thread traverse = new Thread(){
-					public void run(){
-						trav.traverse();
-					}
-				};
-				traverse.start();
+
+
+				trav.traverse(XC_final, YC_final);
+				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
+						colorDataRight, zipLineEndX, zipLineEndY);
+				lightLocalizer.localize();
 				if(odometer.getX()>friendlyZoneXStart && odometer.getX()<friendlyZoneXEnd
 						&& odometer.getY()>friendlyZoneYStart && odometer.getY()<friendlyZoneYEnd){
 					setState(State.Done);
@@ -305,7 +317,7 @@ public class MainProject {
 				Sound.beep();
 				Sound.beep();
 				Sound.beep();
-				setState(State.Navigating);
+				setState(State.NavigatingBack);
 			}
 			if(currState == State.Avoiding){
 				//TODO: implement avoidance
