@@ -39,7 +39,7 @@ public class OdometryDisplay extends Thread {
 
     while (true) {
       displayStart = System.currentTimeMillis();
-
+      t.clear();
       // clear the lines for displaying odometry information
       t.drawString("X:              ", 0, 0);
       t.drawString("Y:              ", 0, 1);

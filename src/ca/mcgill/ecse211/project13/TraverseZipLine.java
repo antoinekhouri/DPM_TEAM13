@@ -112,8 +112,8 @@ public class TraverseZipLine {
 		MainProject.rightMotor.setSpeed(FORWARD_SLOW);
 		MainProject.leftMotor.setSpeed(FORWARD_SLOW);
 
-		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 20), true);
-		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 20), false);
+		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 45), true);
+		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 45), false);
 
 		MainProject.pulleyMotor.setSpeed(FORWARD_SPEED);
 		MainProject.pulleyMotor.forward();
@@ -147,12 +147,12 @@ public class TraverseZipLine {
 		Sound.beep();
 		MainProject.rightMotor.setSpeed(FORWARD_SPEED);
 		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
-		MainProject.pulleyMotor.setSpeed(FORWARD_SLOW);
+		MainProject.pulleyMotor.setSpeed(FORWARD_SPEED);
 
 		MainProject.rightMotor.forward();
 		MainProject.leftMotor.forward();
 		MainProject.pulleyMotor.forward();
-		while(getColorData() <0.3){
+		while(getColorData() <0.5){
 
 		} try{
 			Thread.sleep(100);

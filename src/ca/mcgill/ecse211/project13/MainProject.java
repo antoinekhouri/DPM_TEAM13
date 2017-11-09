@@ -46,7 +46,7 @@ public class MainProject {
 	//main
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.1;
+	public static final double TRACK = 9.25;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
@@ -67,29 +67,7 @@ public class MainProject {
 
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = true;
-	private static int startPosition=4;
-	public static int navX;
-	public static int navY;
-	public static int navBackX;
-	public static int navBackY;
-	public static int zipLineEndX;
-	public static int zipLineEndY;
-	public static int X0_final = 0;
-	public static int Y0_final = 0;
-	public static int XC_final = 0;
-	public static int YC_final = 0;
-	public static int bridgeX;
-	public static int bridgeY;
-	public static int friendlyZoneXStart;
-	public static int friendlyZoneXEnd;
-	public static int friendlyZoneYStart;
-	public static int friendlyZoneYEnd;
-	public static int enemyZoneXStart;
-	public static int enemyZoneXEnd;
-	public static int enemyZoneYStart;
-	public static int enemyZoneYEnd;
-	public static int bridgeEndX;
-	public static int bridgeEndY;	
+
 	public static double minDistance;
 	private static final int bandCenter = 25; // Offset from the wall (cm)
 	private static final int bandWidth = 3; // Width of dead band (cm)
@@ -108,18 +86,43 @@ public class MainProject {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException {
 
-
-		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
+		int startPosition=0;
+		double finalX=0;
+		double finalY=0;
+		double finalTheta=0;
+		int navX=0;
+		int navY=0;
+		int navBackX=0;
+		int navBackY=0;
+		int zipLineEndX=0;
+		int zipLineEndY=0;
+		int X0_final = 0;
+		int Y0_final = 0;
+		int XC_final = 0;
+		int YC_final = 0;
+		int bridgeX=0;
+		int bridgeY=0;
+		int friendlyZoneXStart=0;
+		int friendlyZoneXEnd=0;
+		int friendlyZoneYStart=0;
+		int friendlyZoneYEnd=0;
+		int enemyZoneXStart=0;
+		int enemyZoneXEnd=0;
+		int enemyZoneYStart=0;
+		int enemyZoneYEnd=0;
+		int bridgeEndX=0;
+		int bridgeEndY=0;
+		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, !ENABLE_DEBUG_WIFI_PRINT);
 
 		try {
 
 			Map data = conn.getData();
 
 			// Example 1: Print out all received data
-//			System.out.println("Map:\n" + data);
+			//			System.out.println("Map:\n" + data);
 
 			// Example 2 : Print out specific values
-			
+
 			int redTeam = ((Long) data.get("RedTeam")).intValue();
 			if(redTeam == 13){
 				isGreenTeam = false;
@@ -152,12 +155,29 @@ public class MainProject {
 			} else{
 				startPosition = ((Long) data.get("RedCorner")).intValue();
 			}
+			if(startPosition == 1){
+				finalX = 1;
+				finalY = 1;
+				finalTheta = 0;
+			}else if(startPosition ==2){
+				finalX =7;
+				finalY =1;
+				finalTheta = 0;
+			}else if(startPosition ==3){
+				finalX = 7;
+				finalY = 7;
+				finalTheta = 180;
+			}else{
+				finalX = 1;
+				finalY = 7;
+				finalTheta = 180;
+			}
 			if(isGreenTeam){
 				navX = ((Long) data.get("ZO_G_x")).intValue();
 				navY = ((Long) data.get("ZO_G_y")).intValue();
 				navBackX = ((Long) data.get("SH_LL_x")).intValue();
 				navBackY = ((Long) data.get("SH_LL_y")).intValue();
- 			}else{
+			}else{
 				navX = ((Long) data.get("SH_LL_x")).intValue();
 				navY = ((Long) data.get("SH_LL_y")).intValue();
 				navBackX = ((Long) data.get("ZO_G_x")).intValue();
@@ -168,7 +188,7 @@ public class MainProject {
 			zipLineEndX = ((Long) data.get("ZC_R_x")).intValue();
 			zipLineEndY = ((Long) data.get("ZC_R_y")).intValue();
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+
 		}
 
 		// Wait until user decides to end program
@@ -238,13 +258,14 @@ public class MainProject {
 			}
 			if(currState == State.LightLocalizing){
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
-						colorDataRight, startPosition);
-				lightLocalizer.localize();
+						colorDataRight, finalX, finalY, finalTheta);
+				lightLocalizer.localize(1, 1, 0);
+				buttonChoice = Button.waitForAnyPress();
 				setState(State.Navigating);
 			}
 
 			// create instance of navigation
-			
+
 
 
 			// set up navigation
@@ -252,12 +273,12 @@ public class MainProject {
 				//TODO: implement proper logic for detecting when to go into avoidance
 				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 
-				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, navX,
-						navY, usPoller);
+				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 1,
+						7,1,1, usPoller);
 
 
 
-
+				buttonChoice = Button.waitForAnyPress();
 				if(usPoller.getDistance()<minDistance){
 					setState(State.Avoiding);
 				}
@@ -270,10 +291,11 @@ public class MainProject {
 			if(currState == State.Traversing){
 
 
-				trav.traverse(XC_final, YC_final);
+				trav.traverse(2, 7);
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
-						colorDataRight, zipLineEndX, zipLineEndY);
-				lightLocalizer.localize();
+						colorDataRight);
+				buttonChoice = Button.waitForAnyPress();
+				lightLocalizer.localize(7, 7,180);
 				if(odometer.getX()>friendlyZoneXStart && odometer.getX()<friendlyZoneXEnd
 						&& odometer.getY()>friendlyZoneYStart && odometer.getY()<friendlyZoneYEnd){
 					setState(State.Done);
@@ -341,6 +363,6 @@ public class MainProject {
 				};
 			}
 		}
-	}
+	} 
 
 }

@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.project13;
 
 
 
+import LocalizationTest.LocalizationTestMain;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
@@ -10,8 +11,8 @@ import lejos.robotics.SampleProvider;
 
 public class Navigation implements UltrasonicController {
 	// Constants and variables
-	private static final int FORWARD_SPEED = 100;
-	private static final int FORWARD_SPEED_Right = 100;
+	private static final int FORWARD_SPEED = 150;
+	private static final int FORWARD_SPEED_Right = 150;
 	private static final int ROTATE_SPEED = 50;
 	private static final double tileLength = 30.48;
 	private double minDistance = 0;
@@ -36,8 +37,8 @@ public class Navigation implements UltrasonicController {
 	private  boolean isTurning;
 	private boolean isReady= false;
 	private boolean isDoneWithX = false;
-	private int xCounter = 0;
-	private int yCounter =  0;
+	private double xCounter;
+	private double yCounter;
 	private boolean isDoneWithY = false;
 	/** 
 	 * This constructor is simply used in order to indicate to the system whether or not it will
@@ -52,9 +53,6 @@ public class Navigation implements UltrasonicController {
 		this.colorDataLeft = colorDataLeft;
 		this.colorSensorRight = colorSensorRight;
 		this.colorDataRight = colorDataRight;
-		this.xCounter = (int) (odometer.getX()/tileWidth);
-		this.yCounter = (int) (odometer.getY()/tileWidth);
-
 	}
 	/**
 	 * This method calculates the minimum angle to turn in order to face the destination,
@@ -71,15 +69,15 @@ public class Navigation implements UltrasonicController {
 	 * @param yC zip line start y coordinate
 	 */
 	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
-			double rightRadius, double width, double x0, double y0, UltrasonicPoller uspoller) {
+			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller) {
 		double xDistance = x0 * tileLength - odometer.getX();
 		double yDistance = y0 * tileLength - odometer.getY();
-		this.xCounter = (int) (odometer.getX()/tileWidth);
-		this.yCounter = (int) (odometer.getY()/tileWidth);
+		this.xCounter = originalX;
+		this.yCounter = originalY;
 		while(!isDoneWithY){
 
 			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
 			if(!isDoneWithX){
 				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
 					xDistance = 0;
@@ -172,8 +170,15 @@ public class Navigation implements UltrasonicController {
 				isRightSensor =false;
 			}
 			if(isReady){
-
-
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), true);
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				
+				
+				
+				
+				if(xCounter==x0){
+					isDoneWithX = true;
+				}
 				if(!isDoneWithX){
 					if(Math.abs(odometer.getTheta()-90)<10){
 						xCounter++;
@@ -185,8 +190,9 @@ public class Navigation implements UltrasonicController {
 					if(xCounter==x0){
 						isDoneWithX = true;
 					}
-				}else if (isDoneWithX && !isDoneWithY){
-					if(Math.abs(odometer.getTheta())<10){
+				}
+				if (isDoneWithX && !isDoneWithY){
+					if(Math.abs(odometer.getTheta())<10 || Math.abs(odometer.getTheta())>350){
 						yCounter++;
 					}else if(Math.abs(odometer.getTheta()-180)<10){
 						yCounter--;

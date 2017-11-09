@@ -36,8 +36,8 @@ public class ObstacleAvoidance extends Thread{
 					Sound.beep(); 
 					avoid(); 
 					//after going through the block, resume navigating to its destination 
-					navigation.travelTo(usDistance, odometer, MainProject.WHEEL_RADIUS, MainProject.WHEEL_RADIUS, MainProject.TRACK, MainProject.X0_final,
-							MainProject.Y0_final, usPoller); 
+//					navigation.travelTo(usDistance, odometer, MainProject.WHEEL_RADIUS, MainProject.WHEEL_RADIUS, MainProject.TRACK, MainProject.X0_final,
+//							MainProject.Y0_final,1,1, usPoller); 
 					}
 			}
 		}
