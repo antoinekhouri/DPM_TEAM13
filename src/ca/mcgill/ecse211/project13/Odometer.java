@@ -64,7 +64,7 @@ public class Odometer extends Thread {
 
         nowTachoL = leftMotor.getTachoCount();
         nowTachoR = rightMotor.getTachoCount();
-        distL = 3.14159 * MainProject.WHEEL_RADIUS * (nowTachoL - lastTachoL) / 180;
+        distL = (3.14159 * MainProject.WHEEL_RADIUS * (nowTachoL - lastTachoL) / 180);
         distR = 3.14159 * MainProject.WHEEL_RADIUS * (nowTachoR - lastTachoR) / 180;
         lastTachoL = nowTachoL;
         lastTachoR = nowTachoR;

@@ -68,7 +68,7 @@ public class LightLocalizer {
 	 * Localizes the robot the the desired grid line intersection
 	 * @param position 0-1-2-3, the position on the grid where the robot is placed at
 	 */
-	public void localize(double x, double y, double theta) {
+	public void localize(double x, double y, double theta, boolean isAfter) {
 		this.finalX = x;
 		this.finalY = y;
 		this.finalTheta = theta;
@@ -127,80 +127,27 @@ public class LightLocalizer {
 			MainProject.leftMotor.stop(true);
 			isLeftSensor = true;
 		}
-		if(isRightSensor && isLeftSensor){
+		if(isRightSensor && isLeftSensor && !isAfter){
 			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), true);
 			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), false);
 			isLeftSensor = false;
 			isRightSensor = false;
+		}else{
+			if (isRightSensor && isLeftSensor){
+				isLeftSensor = false;
+				isRightSensor = false;
+			}
 		}
 
 
 		// set the speeds of the motors and move forward (in the x direction)
-		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
-		MainProject.rightMotor.setSpeed(FORWARD_SPEED);
-		MainProject.leftMotor.forward();
-		MainProject.rightMotor.forward();
-
-		// keep going forward until we hit a black line
-		while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
-			//try-catch from ultrasonic poller
-
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				//Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		//reached a black line so stop
-		if(getColorDataLeft() < lightDensity ){
-			MainProject.leftMotor.stop(true);
-			isLeftSensor = true;
-			Sound.beep();
-		}
-		else if(getColorDataRight()< lightDensity){
-			MainProject.rightMotor.stop(true);
-			isRightSensor = true;
-			Sound.beep();
-		}
-		if(isLeftSensor){
-			while(getColorDataRight() > lightDensity){
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					//Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			MainProject.rightMotor.stop(true);
-			isRightSensor = true;
-			Sound.beep();
-		}
-		else if(isRightSensor){
-			while(getColorDataLeft() > lightDensity){
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					//Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			MainProject.leftMotor.stop(true);
-			isLeftSensor = true;
-			Sound.beep();
-		}
-		if(isRightSensor && isLeftSensor){
-			MainProject.leftMotor.setSpeed(ROTATION_SPEED);
-			MainProject.rightMotor.setSpeed(ROTATION_SPEED);
-			MainProject.leftMotor.backward();
+		if(!isAfter){
+			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
+			MainProject.rightMotor.setSpeed(FORWARD_SPEED);
+			MainProject.leftMotor.forward();
 			MainProject.rightMotor.forward();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
 
-				e1.printStackTrace();
-			}
+			// keep going forward until we hit a black line
 			while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
 				//try-catch from ultrasonic poller
 
@@ -217,7 +164,14 @@ public class LightLocalizer {
 				MainProject.leftMotor.stop(true);
 				isLeftSensor = true;
 				Sound.beep();
-				while(getColorDataRight()>lightDensity){
+			}
+			else if(getColorDataRight()< lightDensity){
+				MainProject.rightMotor.stop(true);
+				isRightSensor = true;
+				Sound.beep();
+			}
+			if(isLeftSensor){
+				while(getColorDataRight() > lightDensity){
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
@@ -226,12 +180,11 @@ public class LightLocalizer {
 					}
 				}
 				MainProject.rightMotor.stop(true);
-			}
-			else if(getColorDataRight()< lightDensity){
-				MainProject.rightMotor.stop(true);
 				isRightSensor = true;
 				Sound.beep();
-				while(getColorDataLeft()>lightDensity){
+			}
+			else if(isRightSensor){
+				while(getColorDataLeft() > lightDensity){
 					try {
 						Thread.sleep(1);
 					} catch (InterruptedException e) {
@@ -240,6 +193,80 @@ public class LightLocalizer {
 					}
 				}
 				MainProject.leftMotor.stop(true);
+				isLeftSensor = true;
+				Sound.beep();
+			}
+		}
+		else{
+			isRightSensor = true;
+			isLeftSensor = true;
+		}
+		if(finalX!=7){
+			if(isRightSensor && isLeftSensor){
+				MainProject.leftMotor.setSpeed(ROTATION_SPEED);
+				MainProject.rightMotor.setSpeed(ROTATION_SPEED);
+				if(theta==0 && !isAfter){
+					
+						MainProject.leftMotor.backward();
+						MainProject.rightMotor.forward();
+					
+				}
+				else if(theta!=0){
+					MainProject.leftMotor.stop(true);
+					MainProject.rightMotor.stop(true);
+				}
+				if (isAfter){
+					MainProject.leftMotor.forward();
+					MainProject.rightMotor.backward();
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+
+					e1.printStackTrace();
+				}
+				while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
+					//try-catch from ultrasonic poller
+
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						//Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+				//reached a black line so stop
+				if(getColorDataLeft() < lightDensity ){
+					MainProject.leftMotor.stop(true);
+					isLeftSensor = true;
+					Sound.beep();
+					while(getColorDataRight()>lightDensity){
+						try {
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+							//Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					Sound.beep();
+					MainProject.rightMotor.stop(true);
+				}
+				else if(getColorDataRight()< lightDensity){
+					MainProject.rightMotor.stop(true);
+					isRightSensor = true;
+					Sound.beep();
+					while(getColorDataLeft()>lightDensity){
+						try {
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+							//Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					Sound.beep();
+					MainProject.leftMotor.stop(true);
+				}
 			}
 
 

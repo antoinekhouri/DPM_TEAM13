@@ -19,7 +19,11 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Map;
+
+import org.json.simple.parser.ParseException;
 
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 /**
@@ -46,7 +50,7 @@ public class MainProject {
 	//main
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.25;
+	public static final double TRACK = 9.20;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
@@ -62,7 +66,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.9";
+	private static final String SERVER_IP = "192.168.2.21";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -84,7 +88,7 @@ public class MainProject {
 		return currState.toString();
 	}
 	@SuppressWarnings("unused")
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException, ParseException {
 
 		int startPosition=0;
 		double finalX=0;
@@ -114,7 +118,7 @@ public class MainProject {
 		int bridgeEndY=0;
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, !ENABLE_DEBUG_WIFI_PRINT);
 
-		try {
+		
 
 			Map data = conn.getData();
 
@@ -134,7 +138,7 @@ public class MainProject {
 			if(isGreenTeam){
 				friendlyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
 				friendlyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
-				friendlyZoneYStart = ((Long) data.get("GreenLL__y")).intValue();
+				friendlyZoneYStart = ((Long) data.get("Green_LL_y")).intValue();
 				friendlyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
 				enemyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
 				enemyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
@@ -147,7 +151,7 @@ public class MainProject {
 				friendlyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
 				enemyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
 				enemyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
-				enemyZoneYStart = ((Long) data.get("GreenLL__y")).intValue();
+				enemyZoneYStart = ((Long) data.get("Green_LL__y")).intValue();
 				enemyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
 			}
 			if(isGreenTeam){
@@ -185,11 +189,9 @@ public class MainProject {
 			}
 			XC_final = ((Long) data.get("ZC_G_x")).intValue();
 			YC_final = ((Long) data.get("ZC_G_y")).intValue();
-			zipLineEndX = ((Long) data.get("ZC_R_x")).intValue();
-			zipLineEndY = ((Long) data.get("ZC_R_y")).intValue();
-		} catch (Exception e) {
-
-		}
+			zipLineEndX = ((Long) data.get("ZO_R_x")).intValue();
+			zipLineEndY = ((Long) data.get("ZO_R_y")).intValue();
+		
 
 		// Wait until user decides to end program
 		Button.waitForAnyPress();
@@ -259,9 +261,17 @@ public class MainProject {
 			if(currState == State.LightLocalizing){
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
 						colorDataRight, finalX, finalY, finalTheta);
-				lightLocalizer.localize(1, 1, 0);
+				lightLocalizer.localize(finalX, finalY, finalTheta, false); // corner 1 : 1,1,0;
+				//corner 2: 7,1,0
+				//corner 3: 7,7,180
+				//corner 4: 1,7,180
 				buttonChoice = Button.waitForAnyPress();
-				setState(State.Navigating);
+				if(buttonChoice == Button.ID_ESCAPE){
+					setState(State.Done);
+				}
+				else{
+					setState(State.Navigating);
+				}
 			}
 
 			// create instance of navigation
@@ -273,13 +283,16 @@ public class MainProject {
 				//TODO: implement proper logic for detecting when to go into avoidance
 				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 
-				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 1,
-						7,1,1, usPoller);
+				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+						navY,finalX,finalY, usPoller);//1,1 = depending on starting corner
 
 
 
 				buttonChoice = Button.waitForAnyPress();
-				if(usPoller.getDistance()<minDistance){
+				if(buttonChoice == Button.ID_ESCAPE){
+					setState(State.Done);
+				}
+				else if(usPoller.getDistance()<minDistance){
 					setState(State.Avoiding);
 				}
 				else if(isGreenTeam){
@@ -291,19 +304,26 @@ public class MainProject {
 			if(currState == State.Traversing){
 
 
-				trav.traverse(2, 7);
+				trav.traverse(XC_final,YC_final);
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
 						colorDataRight);
 				buttonChoice = Button.waitForAnyPress();
-				lightLocalizer.localize(7, 7,180);
-				if(odometer.getX()>friendlyZoneXStart && odometer.getX()<friendlyZoneXEnd
-						&& odometer.getY()>friendlyZoneYStart && odometer.getY()<friendlyZoneYEnd){
+				if(buttonChoice == Button.ID_ESCAPE){
 					setState(State.Done);
+					break;
 				}
-				else if(odometer.getX()>enemyZoneXStart && odometer.getX()<enemyZoneXEnd
-						&& odometer.getY()>enemyZoneYStart && odometer.getY()<enemyZoneYEnd){
-					setState(State.FlagSearching);
-				}
+					lightLocalizer.localize(zipLineEndX, zipLineEndY,180,true);
+					buttonChoice = Button.waitForAnyPress();
+					if(buttonChoice == Button.ID_ESCAPE){
+						setState(State.Done);
+					}
+					if(!isGreenTeam){
+						setState(State.Done);
+					}
+					else if(isGreenTeam){
+						setState(State.FlagSearching);
+					}
+				
 			}
 			if(currState == State.CrossingBridge){
 				cb.cross(bridgeEndX, bridgeEndY, odometer);
@@ -317,13 +337,17 @@ public class MainProject {
 				}
 			}
 			if(currState == State.FlagSearching){
+				setState(State.Done);
+				break;
+					
+				
 				//TODO: Implement search zone movement, US sensor sweeping and 
 				//robot movement towards potential flag
-				if(usPoller.getDistance()<200){
-					//Move closer to Object
-					setState(State.FlagSniffing);
-
-				}
+//				if(usPoller.getDistance()<200){
+//					//Move closer to Object
+//					setState(State.FlagSniffing);
+//
+//				}
 			}
 			if(currState == State.FlagSniffing){
 				//TODO: implement light sensor sniffing code
@@ -362,6 +386,11 @@ public class MainProject {
 
 				};
 			}
+		}
+		if(currState==State.Done){
+			leftMotor.stop(true);
+			rightMotor.stop(true);
+			System.exit(0);
 		}
 	} 
 
