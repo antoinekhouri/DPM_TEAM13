@@ -11,8 +11,8 @@ import lejos.robotics.SampleProvider;
 
 public class Navigation implements UltrasonicController {
 	// Constants and variables
-	private static final int FORWARD_SPEED = 150;
-	private static final int FORWARD_SPEED_Right = 150;
+	private static final int FORWARD_SPEED = 170;
+	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.008);
 	private static final int ROTATE_SPEED = 50;
 	private static final double tileLength = 30.48;
 	private double minDistance = 0;
@@ -69,13 +69,21 @@ public class Navigation implements UltrasonicController {
 	 * @param yC zip line start y coordinate
 	 */
 	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
-			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller) {
+			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller
+			) {
 		double xDistance = x0 * tileLength - odometer.getX();
 		double yDistance = y0 * tileLength - odometer.getY();
 		this.xCounter = originalX;
 		this.yCounter = originalY;
 		while(!isDoneWithY){
-
+			if(yCounter==y0){
+				isDoneWithY = true;
+				MainProject.rightMotor.stop(true);
+				MainProject.leftMotor.stop(true);
+			}
+			if(xCounter==x0){
+				isDoneWithX = true;
+			}
 			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
 			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
 			if(!isDoneWithX){
@@ -172,10 +180,10 @@ public class Navigation implements UltrasonicController {
 			if(isReady){
 				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), true);
 				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
-				
-				
-				
-				
+
+
+
+
 				if(xCounter==x0){
 					isDoneWithX = true;
 				}
@@ -212,6 +220,159 @@ public class Navigation implements UltrasonicController {
 		}
 
 
+
+
+	}
+	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
+			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller
+			, boolean isVertical) {
+		double xDistance = x0 * tileLength - odometer.getX();
+		double yDistance = y0 * tileLength - odometer.getY();
+		this.xCounter = originalX;
+		this.yCounter = originalY;
+		while(!isDoneWithX){
+			if(yCounter==y0){
+				isDoneWithY = true;
+				MainProject.rightMotor.stop(true);
+				MainProject.leftMotor.stop(true);
+			}
+			if(xCounter==x0){
+				isDoneWithX = true;
+			}
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			if(isDoneWithY){
+				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
+					xDistance = 0;
+				} else if (x0 * tileLength > odometer.getX()) { // If the destination is to the right of the
+					// current position, rotate 90 degrees clockwise
+					isTurning  = true;
+					turnTo(90, odometer, leftRadius, rightRadius, width);
+					isTurning = false;
+
+				} else if (x0 * tileLength < odometer.getX()) { // Otherwise, rotate 90 degrees counter clock
+					// wise
+					isTurning = true;
+					turnTo(270, odometer, leftRadius, rightRadius, width);
+					isTurning = false;
+				}
+			}
+			else{
+				if (Math.abs(yDistance) < 10) {
+					yDistance = 0;
+				} else if (y0 * tileLength > odometer.getY()) {
+					isTurning = true;
+					turnTo(0, odometer, leftRadius, rightRadius, width);
+					isTurning = false;
+				} else if (y0 * tileLength < odometer.getY()) {
+					isTurning = true;
+					turnTo(180, odometer, leftRadius, rightRadius, width);
+					isTurning = false;
+				}
+			}
+
+			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
+			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
+
+			MainProject.leftMotor.forward();
+			MainProject.rightMotor.forward();
+
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			while(getColorDataLeft() > lightDensity && getColorDataRight() > lightDensity){
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+
+
+			if(getColorDataLeft() < lightDensity ){
+				//              MainProject.leftMotor.setSpeed(0);                   
+				isLeftSensor = true;
+				Sound.beep();
+				//                while(getColorDataRight() > lightDensity){
+				//                    try {
+				//                        Thread.sleep(1);
+				//                    } catch (InterruptedException e) {
+				//                        // TODO Auto-generated catch block
+				//                        e.printStackTrace();
+				//                    }
+				//                }
+				Sound.beep();
+				//              MainProject.rightMotor.setSpeed(0);
+				isRightSensor = true;
+			}
+			else if(getColorDataRight()< lightDensity){
+				//              MainProject.rightMotor.setSpeed(0);
+				isRightSensor = true;
+				Sound.beep();
+				//                while(getColorDataLeft() > lightDensity){
+				//                    try {
+				//                        Thread.sleep(1);
+				//                    } catch (InterruptedException e) {
+				//                        // TODO Auto-generated catch block
+				//                        e.printStackTrace();
+				//                    }
+				//                }
+				Sound.beep();
+				//              MainProject.leftMotor.setSpeed(0);
+				isLeftSensor = true;
+			}
+
+			//          }
+			if(isLeftSensor || isRightSensor){
+				isReady =true;
+				isLeftSensor = false;
+				isRightSensor =false;
+			}
+			if(isReady){
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), true);
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+
+
+
+				if(yCounter==y0){
+					isDoneWithY = true;
+					MainProject.rightMotor.stop(true);
+					MainProject.leftMotor.stop(true);
+				}
+				if (!isDoneWithY){
+					if(Math.abs(odometer.getTheta())<10 || Math.abs(odometer.getTheta())>350){
+						yCounter++;
+					}else if(Math.abs(odometer.getTheta()-180)<10){
+						yCounter--;
+					}
+					odometer.setY(yCounter*tileLength);
+					
+				}
+				if(xCounter==x0){
+					isDoneWithX = true;
+				}
+				if(!isDoneWithX && isDoneWithY){
+					if(Math.abs(odometer.getTheta()-90)<10){
+						xCounter++;
+					}
+					else if(Math.abs(odometer.getTheta()-270)<10){
+						xCounter--;
+					}
+					odometer.setX(xCounter*tileLength);
+					if(xCounter==x0){
+						isDoneWithX = true;
+					}
+				}
+				
+
+
+			}
+		}
 
 
 	}

@@ -50,7 +50,7 @@ public class MainProject {
 	//main
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.20;
+	public static final double TRACK = 9.25;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
@@ -66,7 +66,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.21";
+	private static final String SERVER_IP = "192.168.2.26";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -116,82 +116,98 @@ public class MainProject {
 		int enemyZoneYEnd=0;
 		int bridgeEndX=0;
 		int bridgeEndY=0;
+		int zipLineRedX=0;
+		int zipLineRedY=0;
+		int searchZoneX=0;
+		int searchZoneY=0;
+		boolean isZipLineVertical = false;
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, !ENABLE_DEBUG_WIFI_PRINT);
 
-		
 
-			Map data = conn.getData();
 
-			// Example 1: Print out all received data
-			//			System.out.println("Map:\n" + data);
+		Map data = conn.getData();
 
-			// Example 2 : Print out specific values
+		// Example 1: Print out all received data
+		//			System.out.println("Map:\n" + data);
 
-			int redTeam = ((Long) data.get("RedTeam")).intValue();
-			if(redTeam == 13){
-				isGreenTeam = false;
-			}
-			int greenTeam = ((Long) data.get("GreenTeam")).intValue();
-			if(greenTeam == 13){
-				isGreenTeam = true;
-			}
-			if(isGreenTeam){
-				friendlyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
-				friendlyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
-				friendlyZoneYStart = ((Long) data.get("Green_LL_y")).intValue();
-				friendlyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
-				enemyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
-				enemyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
-				enemyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
-				enemyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
-			}else{
-				friendlyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
-				friendlyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
-				friendlyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
-				friendlyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
-				enemyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
-				enemyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
-				enemyZoneYStart = ((Long) data.get("Green_LL__y")).intValue();
-				enemyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
-			}
-			if(isGreenTeam){
-				startPosition = ((Long) data.get("GreenCorner")).intValue();
-			} else{
-				startPosition = ((Long) data.get("RedCorner")).intValue();
-			}
-			if(startPosition == 1){
-				finalX = 1;
-				finalY = 1;
-				finalTheta = 0;
-			}else if(startPosition ==2){
-				finalX =7;
-				finalY =1;
-				finalTheta = 0;
-			}else if(startPosition ==3){
-				finalX = 7;
-				finalY = 7;
-				finalTheta = 180;
-			}else{
-				finalX = 1;
-				finalY = 7;
-				finalTheta = 180;
-			}
-			if(isGreenTeam){
-				navX = ((Long) data.get("ZO_G_x")).intValue();
-				navY = ((Long) data.get("ZO_G_y")).intValue();
-				navBackX = ((Long) data.get("SH_LL_x")).intValue();
-				navBackY = ((Long) data.get("SH_LL_y")).intValue();
-			}else{
-				navX = ((Long) data.get("SH_LL_x")).intValue();
-				navY = ((Long) data.get("SH_LL_y")).intValue();
-				navBackX = ((Long) data.get("ZO_G_x")).intValue();
-				navBackY = ((Long) data.get("ZO_G_y")).intValue();
-			}
-			XC_final = ((Long) data.get("ZC_G_x")).intValue();
-			YC_final = ((Long) data.get("ZC_G_y")).intValue();
-			zipLineEndX = ((Long) data.get("ZO_R_x")).intValue();
-			zipLineEndY = ((Long) data.get("ZO_R_y")).intValue();
-		
+		// Example 2 : Print out specific values
+
+		int redTeam = ((Long) data.get("RedTeam")).intValue();
+		if(redTeam == 13){
+			isGreenTeam = false;
+		}
+		int greenTeam = ((Long) data.get("GreenTeam")).intValue();
+		if(greenTeam == 13){
+			isGreenTeam = true;
+		}
+		if(isGreenTeam){
+			friendlyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
+			friendlyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
+			friendlyZoneYStart = ((Long) data.get("Green_LL_y")).intValue();
+			friendlyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
+			enemyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
+			enemyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
+			enemyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
+			enemyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
+			searchZoneX = ((Long) data.get("SR_LL_x")).intValue();
+			searchZoneY = ((Long) data.get("SR_LL_y")).intValue();
+		}else{
+			friendlyZoneXStart = ((Long) data.get("Red_LL_x")).intValue();
+			friendlyZoneXEnd = ((Long) data.get("Red_UR_x")).intValue();
+			friendlyZoneYStart = ((Long) data.get("Red_LL_y")).intValue();
+			friendlyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
+			enemyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
+			enemyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
+			enemyZoneYStart = ((Long) data.get("Green_LL__y")).intValue();
+			enemyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
+			searchZoneX = ((Long) data.get("SG_LL_x")).intValue();
+			searchZoneY = ((Long) data.get("SG_LL_y")).intValue();
+		}
+		if(isGreenTeam){
+			startPosition = ((Long) data.get("GreenCorner")).intValue();
+		} else{
+			startPosition = ((Long) data.get("RedCorner")).intValue();
+		}
+		if(startPosition == 1){
+			finalX = 1;
+			finalY = 1;
+			finalTheta = 0;
+		}else if(startPosition ==2){
+			finalX =7;
+			finalY =1;
+			finalTheta = 0;
+		}else if(startPosition ==3){
+			finalX = 7;
+			finalY = 7;
+			finalTheta = 180;
+		}else{
+			finalX = 1;
+			finalY = 7;
+			finalTheta = 180;
+		}
+		if(isGreenTeam){
+			navX = ((Long) data.get("ZO_G_x")).intValue();
+			navY = ((Long) data.get("ZO_G_y")).intValue();
+			navBackX = ((Long) data.get("SH_LL_x")).intValue();
+			navBackY = ((Long) data.get("SH_LL_y")).intValue();
+		}else{
+			navX = ((Long) data.get("SH_LL_x")).intValue();
+			navY = ((Long) data.get("SH_LL_y")).intValue();
+			navBackX = ((Long) data.get("ZO_G_x")).intValue();
+			navBackY = ((Long) data.get("ZO_G_y")).intValue();
+		}
+		XC_final = ((Long) data.get("ZC_G_x")).intValue();
+		YC_final = ((Long) data.get("ZC_G_y")).intValue();
+		zipLineRedX = ((Long) data.get("ZC_R_x")).intValue();
+		zipLineRedY = ((Long) data.get("ZC_R_y")).intValue();
+		zipLineEndX = ((Long) data.get("ZO_R_x")).intValue();
+		zipLineEndY = ((Long) data.get("ZO_R_y")).intValue();
+		if(XC_final==zipLineRedX){
+			isZipLineVertical=true;
+		}else if (YC_final==zipLineRedY){
+			isZipLineVertical=false;
+		}
+
 
 		// Wait until user decides to end program
 		Button.waitForAnyPress();
@@ -282,9 +298,13 @@ public class MainProject {
 			if(currState == State.Navigating){
 				//TODO: implement proper logic for detecting when to go into avoidance
 				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-
-				nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
-						navY,finalX,finalY, usPoller);//1,1 = depending on starting corner
+				if(isZipLineVertical){
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+						navY,finalX,finalY, usPoller, isZipLineVertical);//1,1 = depending on starting corner
+				}else{
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+							navY,finalX,finalY, usPoller);
+				}
 
 
 
@@ -312,18 +332,29 @@ public class MainProject {
 					setState(State.Done);
 					break;
 				}
-					lightLocalizer.localize(zipLineEndX, zipLineEndY,180,true);
-					buttonChoice = Button.waitForAnyPress();
-					if(buttonChoice == Button.ID_ESCAPE){
-						setState(State.Done);
+				if(isGreenTeam){
+					if(zipLineRedX>XC_final){
+						finalTheta=180;
+					}else if(zipLineRedX<XC_final){
+						finalTheta =0;
+					}else if(zipLineRedY>YC_final){
+						finalTheta=90;
+					}else{
+						finalTheta=270;
 					}
-					if(!isGreenTeam){
-						setState(State.Done);
-					}
-					else if(isGreenTeam){
-						setState(State.FlagSearching);
-					}
-				
+				}
+				lightLocalizer.localize(zipLineEndX, zipLineEndY,finalTheta,true);
+				buttonChoice = Button.waitForAnyPress();
+				if(buttonChoice == Button.ID_ESCAPE){
+					setState(State.Done);
+				}
+				if(!isGreenTeam){
+					setState(State.Done);
+				}
+				else if(isGreenTeam){
+					setState(State.FlagSearching);
+				}
+
 			}
 			if(currState == State.CrossingBridge){
 				cb.cross(bridgeEndX, bridgeEndY, odometer);
@@ -337,17 +368,19 @@ public class MainProject {
 				}
 			}
 			if(currState == State.FlagSearching){
+				final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
+				nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
 				setState(State.Done);
 				break;
-					
-				
+
+
 				//TODO: Implement search zone movement, US sensor sweeping and 
 				//robot movement towards potential flag
-//				if(usPoller.getDistance()<200){
-//					//Move closer to Object
-//					setState(State.FlagSniffing);
-//
-//				}
+				//				if(usPoller.getDistance()<200){
+				//					//Move closer to Object
+				//					setState(State.FlagSniffing);
+				//
+				//				}
 			}
 			if(currState == State.FlagSniffing){
 				//TODO: implement light sensor sniffing code

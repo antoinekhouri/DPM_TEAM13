@@ -13,8 +13,8 @@ import lejos.robotics.SampleProvider;
 
 public class NavigationTestMain {
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.35;
-	private static final Port usPort = LocalEV3.get().getPort("S1");
+	public static final double TRACK = 9.40;
+	private static final Port usPort = LocalEV3.get().getPort("S3");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	public static final EV3LargeRegulatedMotor rightMotor =
@@ -86,8 +86,8 @@ public class NavigationTestMain {
 				 * Definition of the navigation thread
 				 */
 				public void run() {
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 2,
-							2, usPoller);
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK, 0,
+							5, usPoller);
 				}
 
 			};

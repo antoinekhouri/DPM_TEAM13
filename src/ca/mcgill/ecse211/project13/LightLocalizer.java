@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.project13;
 
-import lejos.hardware.Sound;
+import lejos.hardware.Sound;	
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.SampleProvider;
 
@@ -69,6 +69,10 @@ public class LightLocalizer {
 	 * @param position 0-1-2-3, the position on the grid where the robot is placed at
 	 */
 	public void localize(double x, double y, double theta, boolean isAfter) {
+		if(isAfter){
+			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 15), true);
+		    MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 15), false);
+		}
 		this.finalX = x;
 		this.finalY = y;
 		this.finalTheta = theta;
@@ -97,7 +101,8 @@ public class LightLocalizer {
 			Sound.beep();
 		}
 		else if(getColorDataRight()< lightDensity){
-			MainProject.rightMotor.stop(true);
+		
+			MainProject.rightMotor.stop(true);			
 			isRightSensor = true;
 			Sound.beep();
 		}
@@ -111,7 +116,9 @@ public class LightLocalizer {
 				}
 			}
 			Sound.beep();
-			MainProject.rightMotor.stop(true);
+			MainProject.rightMotor.stop(false);
+			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+			MainProject.rightMotor.stop(false);
 			isRightSensor = true;
 		}
 		else if(isRightSensor){
@@ -124,7 +131,9 @@ public class LightLocalizer {
 				}
 			}
 			Sound.beep();
-			MainProject.leftMotor.stop(true);
+			MainProject.leftMotor.stop(false);
+			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+			MainProject.leftMotor.stop(false);
 			isLeftSensor = true;
 		}
 		if(isRightSensor && isLeftSensor && !isAfter){
@@ -179,7 +188,9 @@ public class LightLocalizer {
 						e.printStackTrace();
 					}
 				}
-				MainProject.rightMotor.stop(true);
+				MainProject.rightMotor.stop(false);
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				MainProject.rightMotor.stop(false);
 				isRightSensor = true;
 				Sound.beep();
 			}
@@ -192,7 +203,9 @@ public class LightLocalizer {
 						e.printStackTrace();
 					}
 				}
-				MainProject.leftMotor.stop(true);
+				MainProject.leftMotor.stop(false);
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				MainProject.leftMotor.stop(false);
 				isLeftSensor = true;
 				Sound.beep();
 			}
@@ -211,7 +224,11 @@ public class LightLocalizer {
 						MainProject.rightMotor.forward();
 					
 				}
-				else if(theta!=0){
+				else if(theta==180){
+					MainProject.leftMotor.backward();
+					MainProject.rightMotor.forward();
+					
+				}else if(theta !=0 && theta!=180){
 					MainProject.leftMotor.stop(true);
 					MainProject.rightMotor.stop(true);
 				}
@@ -250,7 +267,9 @@ public class LightLocalizer {
 						}
 					}
 					Sound.beep();
-					MainProject.rightMotor.stop(true);
+					MainProject.rightMotor.stop(false);
+					MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+					MainProject.rightMotor.stop(false);
 				}
 				else if(getColorDataRight()< lightDensity){
 					MainProject.rightMotor.stop(true);
@@ -265,10 +284,66 @@ public class LightLocalizer {
 						}
 					}
 					Sound.beep();
-					MainProject.leftMotor.stop(true);
+					MainProject.leftMotor.stop(false);
+					MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+					MainProject.leftMotor.stop(false);
+				}
+			}
+			if(theta==180 && !isAfter){
+				MainProject.leftMotor.forward();
+				MainProject.rightMotor.backward();
+			}try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+
+				e1.printStackTrace();
+			}
+			while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
+				//try-catch from ultrasonic poller
+
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					//Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 
+			//reached a black line so stop
+			if(getColorDataLeft() < lightDensity ){
+				MainProject.leftMotor.stop(true);
+				isLeftSensor = true;
+				Sound.beep();
+				while(getColorDataRight()>lightDensity){
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						//Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				Sound.beep();
+				MainProject.rightMotor.stop(false);
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				MainProject.rightMotor.stop(false);
+			}
+			else if(getColorDataRight()< lightDensity){
+				MainProject.rightMotor.stop(true);
+				isRightSensor = true;
+				Sound.beep();
+				while(getColorDataLeft()>lightDensity){
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						//Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				Sound.beep();
+				MainProject.leftMotor.stop(false);
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				MainProject.leftMotor.stop(false);
+			}
 
 		}
 
