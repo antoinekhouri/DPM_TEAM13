@@ -12,8 +12,9 @@ import lejos.robotics.SampleProvider;
 public class Navigation implements UltrasonicController {
 	// Constants and variables
 	private static final int FORWARD_SPEED = 170;
-	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.008);
+	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.005);
 	private static final int ROTATE_SPEED = 50;
+	private static final int ROTATE_SPEED_Right = (int) (ROTATE_SPEED*1.005);
 	private static final double tileLength = 30.48;
 	private double minDistance = 0;
 	private Odometer odometer;
@@ -30,7 +31,7 @@ public class Navigation implements UltrasonicController {
 	private Navigation nav;
 	private SampleProvider usDistance;
 	private UltrasonicPoller usPoller;
-	private static double lightDensity = 0.40;
+	private static double lightDensity = 0.50;
 
 	private static final double pulley_to_roborCenter = 1.3;
 	private boolean stop = false;
@@ -85,7 +86,7 @@ public class Navigation implements UltrasonicController {
 				isDoneWithX = true;
 			}
 			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
 			if(!isDoneWithX){
 				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
 					xDistance = 0;
@@ -240,7 +241,7 @@ public class Navigation implements UltrasonicController {
 				isDoneWithX = true;
 			}
 			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
 			if(isDoneWithY){
 				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
 					xDistance = 0;
@@ -390,7 +391,7 @@ public class Navigation implements UltrasonicController {
 			double width) {
 
 		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-		MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+		MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
 		while (theta - odometer.getTheta() > 360) {
 			theta = theta - 360;
 		}
