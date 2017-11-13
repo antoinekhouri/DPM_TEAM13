@@ -52,8 +52,8 @@ public class MainProject {
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 9.25;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
-	private static final Port lsPortLeft = LocalEV3.get().getPort("S2");
-	private static final Port lsPortRight = LocalEV3.get().getPort("S4");
+	private static final Port lsPortLeft = LocalEV3.get().getPort("S1");
+	private static final Port lsPortRight = LocalEV3.get().getPort("S2");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	public static final EV3LargeRegulatedMotor rightMotor =
@@ -66,7 +66,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.26";
+	private static final String SERVER_IP = "192.168.2.6";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -89,7 +89,8 @@ public class MainProject {
 	}
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException, ParseException {
-
+		
+		boolean isZipLineDiagonal = false;
 		int startPosition=0;
 		double finalX=0;
 		double finalY=0;
@@ -204,8 +205,11 @@ public class MainProject {
 		zipLineEndY = ((Long) data.get("ZO_R_y")).intValue();
 		if(XC_final==zipLineRedX){
 			isZipLineVertical=true;
+			
 		}else if (YC_final==zipLineRedY){
 			isZipLineVertical=false;
+		}else if(YC_final != zipLineRedY && XC_final!=zipLineRedX){
+			isZipLineDiagonal=true;
 		}
 
 
@@ -333,7 +337,18 @@ public class MainProject {
 					break;
 				}
 				if(isGreenTeam){
-					if(zipLineRedX>XC_final){
+					if(isZipLineDiagonal){
+						if(zipLineRedX>XC_final && zipLineRedY>YC_final){
+							finalTheta = 90;
+						}else if(zipLineRedX>XC_final && zipLineRedY<YC_final){
+							finalTheta = 180;
+						}else if(zipLineRedX<XC_final && zipLineRedY>YC_final){
+							finalTheta = 270;
+						}else{
+							finalTheta = 0;
+						}
+					}
+					else if(zipLineRedX>XC_final){
 						finalTheta=180;
 					}else if(zipLineRedX<XC_final){
 						finalTheta =0;
@@ -369,7 +384,11 @@ public class MainProject {
 			}
 			if(currState == State.FlagSearching){
 				final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
+				if(!isZipLineVertical){
+					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller, isZipLineVertical);
+				}else{
+					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
+				}
 				setState(State.Done);
 				break;
 

@@ -57,28 +57,24 @@ public class TraverseZipLine {
 	    	if(yC*tileLength-odometer.getY()>0){
 	    		theta = 0;
 	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		MainProject.leftMotor.stop(true);
-	    		MainProject.rightMotor.stop(true);
+	    		
 	    	}
 	    	else{
 	    		theta = 180;
 	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		MainProject.leftMotor.stop(true);
-	    		MainProject.rightMotor.stop(true);
+	    	
 	    	}	
 	    }
 	    else if(Math.abs((yC*tileLength-odometer.getY()))<10){
 	    	if(xC*tileLength-odometer.getX()>0){
 	    		theta =90 ;
 	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		MainProject.leftMotor.stop(true);
-	    		MainProject.rightMotor.stop(true);
+	    		
 	    	}
 	    	else{
 	    		theta =270;
 	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		MainProject.leftMotor.stop(true);
-	    		MainProject.rightMotor.stop(true);
+	    		
 	    	}
 	    	
 	    }
@@ -162,7 +158,14 @@ public class TraverseZipLine {
 		Sound.beep();
 		MainProject.rightMotor.setSpeed(FORWARD_SLOW);
 		MainProject.leftMotor.setSpeed(FORWARD_SLOW);
+		MainProject.rightMotor.forward();
+		MainProject.leftMotor.forward();
 		MainProject.pulleyMotor.stop(true);
+		MainProject.pulleyMotor.setSpeed(FORWARD_SPEED+100);
+		MainProject.pulleyMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 25), false);
+		MainProject.pulleyMotor.stop(false);
+		MainProject.rightMotor.stop(true);
+		MainProject.leftMotor.stop(false);
 		if(Math.abs(originalTheta-0)<10){
 			odometer.setY(originalY+5*tileLength);
 		}else if(Math.abs(originalTheta-90)<10){
