@@ -50,7 +50,7 @@ public class MainProject {
 	//main
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.25;
+	public static final double TRACK = 9.40;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S1");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S2");
@@ -66,7 +66,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.6";
+	private static final String SERVER_IP = "192.168.2.37";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -89,7 +89,7 @@ public class MainProject {
 	}
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException, ParseException {
-		
+
 		boolean isZipLineDiagonal = false;
 		int startPosition=0;
 		double finalX=0;
@@ -169,15 +169,15 @@ public class MainProject {
 		} else{
 			startPosition = ((Long) data.get("RedCorner")).intValue();
 		}
-		if(startPosition == 1){
+		if(startPosition == 0){
 			finalX = 1;
 			finalY = 1;
 			finalTheta = 0;
-		}else if(startPosition ==2){
+		}else if(startPosition ==1){
 			finalX =7;
 			finalY =1;
 			finalTheta = 0;
-		}else if(startPosition ==3){
+		}else if(startPosition ==2){
 			finalX = 7;
 			finalY = 7;
 			finalTheta = 180;
@@ -205,7 +205,7 @@ public class MainProject {
 		zipLineEndY = ((Long) data.get("ZO_R_y")).intValue();
 		if(XC_final==zipLineRedX){
 			isZipLineVertical=true;
-			
+
 		}else if (YC_final==zipLineRedY){
 			isZipLineVertical=false;
 		}else if(YC_final != zipLineRedY && XC_final!=zipLineRedX){
@@ -270,13 +270,15 @@ public class MainProject {
 				// start the ultrasonic localization. Once it is done, it will wait for a button to be pressed
 				// to proceed
 				// if escape is pressed, the program will stop
-				buttonChoice = Button.waitForAnyPress();
-				if (buttonChoice == Button.ID_ESCAPE) {
-					System.exit(0);
-				}
-				else{
+								buttonChoice = Button.waitForAnyPress();
+								if (buttonChoice == Button.ID_ESCAPE) {
+									System.exit(0);
+								}
+								else{
+//				if(!usLocalizer.getIsDone()) {
 					setState(State.LightLocalizing);
 				}
+				//				}
 			}
 			if(currState == State.LightLocalizing){
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
@@ -285,13 +287,13 @@ public class MainProject {
 				//corner 2: 7,1,0
 				//corner 3: 7,7,180
 				//corner 4: 1,7,180
-				buttonChoice = Button.waitForAnyPress();
-				if(buttonChoice == Button.ID_ESCAPE){
-					setState(State.Done);
-				}
-				else{
-					setState(State.Navigating);
-				}
+								buttonChoice = Button.waitForAnyPress();
+								if(buttonChoice == Button.ID_ESCAPE){
+									setState(State.Done);
+								}
+								else{
+				setState(State.Navigating);
+								}
 			}
 
 			// create instance of navigation
@@ -304,7 +306,7 @@ public class MainProject {
 				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 				if(isZipLineVertical){
 					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
-						navY,finalX,finalY, usPoller, isZipLineVertical);//1,1 = depending on starting corner
+							navY,finalX,finalY, usPoller, isZipLineVertical);//1,1 = depending on starting corner
 				}else{
 					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
 							navY,finalX,finalY, usPoller);
@@ -312,11 +314,11 @@ public class MainProject {
 
 
 
-				buttonChoice = Button.waitForAnyPress();
-				if(buttonChoice == Button.ID_ESCAPE){
-					setState(State.Done);
-				}
-				else if(usPoller.getDistance()<minDistance){
+				//				buttonChoice = Button.waitForAnyPress();
+				//				if(buttonChoice == Button.ID_ESCAPE){
+				//					setState(State.Done);
+				//				}
+				if(usPoller.getDistance()<minDistance){
 					setState(State.Avoiding);
 				}
 				else if(isGreenTeam){
@@ -332,10 +334,10 @@ public class MainProject {
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
 						colorDataRight);
 				buttonChoice = Button.waitForAnyPress();
-				if(buttonChoice == Button.ID_ESCAPE){
-					setState(State.Done);
-					break;
-				}
+				//				if(buttonChoice == Button.ID_ESCAPE){
+				//					setState(State.Done);
+				//					break;
+				//				}
 				if(isGreenTeam){
 					if(isZipLineDiagonal){
 						if(zipLineRedX>XC_final && zipLineRedY>YC_final){
@@ -359,10 +361,10 @@ public class MainProject {
 					}
 				}
 				lightLocalizer.localize(zipLineEndX, zipLineEndY,finalTheta,true);
-				buttonChoice = Button.waitForAnyPress();
-				if(buttonChoice == Button.ID_ESCAPE){
-					setState(State.Done);
-				}
+				//				buttonChoice = Button.waitForAnyPress();
+				//				if(buttonChoice == Button.ID_ESCAPE){
+				//					setState(State.Done);
+				//				}
 				if(!isGreenTeam){
 					setState(State.Done);
 				}

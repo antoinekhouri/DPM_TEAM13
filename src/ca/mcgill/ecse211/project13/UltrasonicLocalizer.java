@@ -6,7 +6,9 @@ import lejos.hardware.Sound;
 
 
 public class UltrasonicLocalizer implements UltrasonicController {
-
+	
+	
+	
 	public static double distance;
 	private static final int ROTATE_SPEED = 60;
 	private boolean isFallingEdge;
@@ -34,7 +36,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	
 	private static double dTheta;
 	
-	private static boolean keepGoing;
+	private static boolean keepGoing=true;
 	private static boolean isInPosition;
 	
 	boolean isInitialized = false;
@@ -139,10 +141,15 @@ public class UltrasonicLocalizer implements UltrasonicController {
   	  		  MainProject.leftMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90), false);
   		  }
   		  odometer.setTheta(0);
+  		  
   		  keepGoing = false;
   	  }
 	}
-	// initialize all the global variables
+	public boolean getIsDone() {
+		return keepGoing;
+	}
+	
+		// initialize all the global variables
 	/**
 	 * initalize all the global variable
 	 */

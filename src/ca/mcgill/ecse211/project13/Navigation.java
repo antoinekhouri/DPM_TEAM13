@@ -31,7 +31,7 @@ public class Navigation implements UltrasonicController {
 	private Navigation nav;
 	private SampleProvider usDistance;
 	private UltrasonicPoller usPoller;
-	private static double lightDensity = 0.50;
+	private static double lightDensity = 0.40;
 
 	private static final double pulley_to_roborCenter = 1.3;
 	private boolean stop = false;
@@ -185,9 +185,7 @@ public class Navigation implements UltrasonicController {
 
 
 
-				if(xCounter==x0){
-					isDoneWithX = true;
-				}
+				
 				if(!isDoneWithX){
 					if(Math.abs(odometer.getTheta()-90)<10){
 						xCounter++;
@@ -199,6 +197,9 @@ public class Navigation implements UltrasonicController {
 					if(xCounter==x0){
 						isDoneWithX = true;
 					}
+				}
+				if(xCounter==x0){
+					isDoneWithX = true;
 				}
 				if (isDoneWithX && !isDoneWithY){
 					if(Math.abs(odometer.getTheta())<10 || Math.abs(odometer.getTheta())>350){
@@ -229,6 +230,8 @@ public class Navigation implements UltrasonicController {
 			, boolean isVertical) {
 		double xDistance = x0 * tileLength - odometer.getX();
 		double yDistance = y0 * tileLength - odometer.getY();
+		isDoneWithX = false;
+		isDoneWithY = false;
 		this.xCounter = originalX;
 		this.yCounter = originalY;
 		while(!isDoneWithX){
@@ -239,6 +242,8 @@ public class Navigation implements UltrasonicController {
 			}
 			if(xCounter==x0){
 				isDoneWithX = true;
+				MainProject.rightMotor.stop(true);
+				MainProject.leftMotor.stop(true);
 			}
 			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
 			MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);

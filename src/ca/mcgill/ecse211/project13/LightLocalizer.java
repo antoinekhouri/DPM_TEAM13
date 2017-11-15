@@ -71,8 +71,8 @@ public class LightLocalizer {
 	 */
 	public void localize(double x, double y, double theta, boolean isAfter) {
 		if(isAfter){
-			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 20), true);
-			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 20), false);
+			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 15), true);
+			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 15), false);
 		}
 		this.finalX = x;
 		this.finalY = y;
@@ -118,7 +118,11 @@ public class LightLocalizer {
 			}
 			Sound.beep();
 			MainProject.rightMotor.stop(false);
-			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
+			if(!isAfter) {
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
+			}else {
+				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1), false);
+			}
 			MainProject.rightMotor.stop(false);
 			isRightSensor = true;
 		}
@@ -133,7 +137,12 @@ public class LightLocalizer {
 			}
 			Sound.beep();
 			MainProject.leftMotor.stop(false);
-			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
+			if(!isAfter) {
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
+			}else {
+				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1), false);
+			}
+
 			MainProject.leftMotor.stop(false);
 			isLeftSensor = true;
 		}
