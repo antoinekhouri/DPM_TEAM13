@@ -1,9 +1,18 @@
 package ca.mcgill.ecse211.project13;
 
-import lejos.hardware.Sound;	
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
-import lejos.robotics.SampleProvider;
+import lejos.hardware.Sound;		
 
+import lejos.robotics.SampleProvider;
+/**
+ * This class implements the light localization part of the project. First the robot
+ * moves until one of the sensors detects a grid line, then that sensor's side's motor
+ * is stopped until the other sensor detects the line as well. Then the other side's motor
+ * reverses for 2 cm, in order for the robot to be aligned with the grid. Then the robot
+ * turns 90 degrees in the appropriate direction (based on the starting corner) and repeats
+ * the same process as the in the previous direction to align again. 
+ * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly
+ *
+ */
 public class LightLocalizer {
 
 	public static int ROTATION_SPEED = 40;
@@ -30,11 +39,17 @@ public class LightLocalizer {
 	private double finalTheta;
 	private boolean isZipLineLocalization = false;
 	// private EV3LargeRegulatedMotor MainProject.leftMotor, MainProject.rightMotor;
+	
 	/**
 	 * Default constructor
-	 * @param odometer Odometer used to get information about robot's current position
-	 * @param colorSensor	SampleProvider used by the light sensor
-	 * @param colorData Buffer used to store the light sensor's data
+	 * @param odometer odometer used to poll 
+	 * @param colorSensorLeft left color sensor of the robot
+	 * @param colorDataLeft left color sensor's data buffer
+	 * @param colorSensorRight right color sensor of the robot
+	 * @param colorDataRight right color sensor's data buffer
+	 * @param x x position the robot is localizing to
+	 * @param y y position the robot is localizing to
+	 * @param theta theta angle the robot is localizing to
 	 */
 	public LightLocalizer(Odometer odometer, SampleProvider colorSensorLeft, float[] colorDataLeft, 
 			SampleProvider colorSensorRight, float[] colorDataRight, double x, double y, double theta) 
@@ -54,6 +69,14 @@ public class LightLocalizer {
 		MainProject.rightMotor.setAcceleration(ACCELERATION);
 
 	}
+	/**
+	 * Secondary constructor used for post-zip line localization
+	 * @param odometer odometer used to poll the robot's current position
+	 * @param colorSensorLeft left color sensor
+	 * @param colorDataLeft left color sensor's data buffer
+	 * @param colorSensorRight right color sensor
+	 * @param colorDataRight right color sensor's data buffer
+	 */
 	public LightLocalizer(Odometer odometer, SampleProvider colorSensorLeft, float[] colorDataLeft, 
 			SampleProvider colorSensorRight, float[] colorDataRight) 
 	{
@@ -65,9 +88,14 @@ public class LightLocalizer {
 		this.isZipLineLocalization = true;
 	}
 	//Localize robot using the light sensor
+
 	/**
-	 * Localizes the robot the the desired grid line intersection
-	 * @param position 0-1.5-1.5-3, the position on the grid where the robot is placed at
+	 * This method implements the localization behaviour specified
+	 * @param x x coordinate the robot is localizing to
+	 * @param y y coordinate the robot is localizing to 
+	 * @param theta theta angle the robot is localizing to
+	 * @param isAfter boolean variable used to determined if this is a post-zipline 
+	 * localization
 	 */
 	public void localize(double x, double y, double theta, boolean isAfter) {
 		if(isAfter){
@@ -305,62 +333,7 @@ public class LightLocalizer {
 					}
 				}
 			}
-			//			if(theta==180 && !isAfter && finalX!=7){
-			//				MainProject.leftMotor.forward();
-			//				MainProject.rightMotor.backward();
-			//				try {
-			//					Thread.sleep(1000);
-			//				} catch (InterruptedException e1) {
-			//
-			//					e1.printStackTrace();
-			//				}
-			//				while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
-			//					//try-catch from ultrasonic poller
-			//
-			//					try {
-			//						Thread.sleep(1);
-			//					} catch (InterruptedException e) {
-			//						//Auto-generated catch block
-			//						e.printStackTrace();
-			//					}
-			//				}
-			//
-			//				//reached a black line so stop
-			//				if(getColorDataLeft() < lightDensity ){
-			//					MainProject.leftMotor.stop(false);
-			//					isLeftSensor = true;
-			//					Sound.beep();
-			//					while(getColorDataRight()>lightDensity){
-			//						try {
-			//							Thread.sleep(1);
-			//						} catch (InterruptedException e) {
-			//							//Auto-generated catch block
-			//							e.printStackTrace();
-			//						}
-			//					}
-			//					Sound.beep();
-			//					//				MainProject.rightMotor.stop(false);
-			//					//				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
-			//					MainProject.rightMotor.stop(false);
-			//				}
-			//				else if(getColorDataRight()< lightDensity){
-			//					MainProject.rightMotor.stop(false);
-			//					isRightSensor = true;
-			//					Sound.beep();
-			//					while(getColorDataLeft()>lightDensity){
-			//						try {
-			//							Thread.sleep(1);
-			//						} catch (InterruptedException e) {
-			//							//Auto-generated catch block
-			//							e.printStackTrace();
-			//						}
-			//					}
-			//					Sound.beep();
-			//					//				MainProject.leftMotor.stop(false);
-			//					//				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
-			//					MainProject.leftMotor.stop(false);
-			//				}
-			//			}
+			
 		}
 
 		odometer.setX(x*tileLength);

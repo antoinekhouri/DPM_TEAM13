@@ -1,11 +1,17 @@
 package ca.mcgill.ecse211.project13;
 
-import lejos.hardware.Sound;
-import lejos.hardware.sensor.SensorModes;
+import lejos.hardware.Sound;	
 import lejos.robotics.SampleProvider;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
 
-
+/**
+ * This part of the project implements the obstacle avoidance part of the project.
+ * When the ultrasonic sensor detects an object head on to the robot, the robot turns 90 degrees clockwise,
+ * and the ultrasonic sensor rotates 75 degrees anti-clockwise (ideally it would rotate 90 but due to our mechanical design, if it does so, it will hit the wheel)
+ * the robot then keeps moving forward until the sensor stops detecting an obstacle
+ * then the robot and sensor will realign themselves to their original orientation
+ * @author Veronica Nasseem
+ *
+ */
 public class ObstacleAvoidance extends Thread{		
 		
 		
@@ -16,7 +22,13 @@ public class ObstacleAvoidance extends Thread{
 		private static final int FORWARD_SPEED = 185;
 		private static final int FORWARD_SPEED_Right = 185;
 		private SampleProvider usDistance;
-		
+		/**
+		 * Default constructor
+		 * @param navigation: the object that allows the robot to travel from one point to another
+		 * @param odometer: the object that keeps track of the current location of the robot
+		 * @param usPoller: the poller that is used by the ultrasonic sensor
+		 * @param usDistance: the distance the US sensor is reading between itself and an obstacle
+		 */
 		public ObstacleAvoidance(Navigation navigation, Odometer odometer, UltrasonicPoller usPoller, SampleProvider usDistance) {
 			this.usPoller = usPoller; 
 			this.navigation = navigation; 
@@ -41,7 +53,9 @@ public class ObstacleAvoidance extends Thread{
 					}
 			}
 		}
-		
+		/**
+		 * this is the method that implements avoidance of obstacle while navigating
+		 */
 		public void avoid() {
 			
 				//when we see a block head on, rotate the robot 90 degrees clockwise 

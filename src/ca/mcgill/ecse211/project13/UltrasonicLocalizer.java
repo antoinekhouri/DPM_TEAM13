@@ -4,7 +4,16 @@ package ca.mcgill.ecse211.project13;
 import ca.mcgill.ecse211.project13.UltrasonicController;	
 import lejos.hardware.Sound;
 
-
+/**
+ * This class implements the ultrasonic localizing part of the project. It implements falling edge localization.
+ * First the robot rotates clockwise until it detects a falling edge. Then it stores the 2 angles alpha1 and alpha2
+ * for the first falling edge and calculates the average of the two and sets it as alpha. Then it keeps rotating 
+ * clockwise until it no longer detects a wall. Then it starts rotating counter clockwise until it detects the 
+ * second falling edge. It then stores beta1 and beta2, and calculates the average angle beta. Alpha and beta are 
+ * then used to determine the offset of the robot, and its angle is then adjusted to the calculated angle.
+ * @author Antoine Khouri, Nusaiba Radi, Veronica Nasseem, Nikki Daly, Diana Serra, Asma Abdullah
+ *
+ */
 public class UltrasonicLocalizer implements UltrasonicController {
 	
 	
@@ -45,12 +54,11 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * Default constructor
 	 * @param isFallingEdge Boolean variable indicating wether to use falling or rising edge
 	 * @param odometer Odometer used to get information about the robot's current position
-	 * @param position Position the robot is placed at (0-1-2-3)
 	 */
 	public UltrasonicLocalizer(boolean isFallingEdge, Odometer odometer){
 		this.isFallingEdge = isFallingEdge;
 		this.odometer = odometer;
-		this.position = position;
+		
 	}
 	/**
 	 * Performs falling edge US localization
@@ -114,7 +122,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    
 	    if(isAlphaSet && isBetaSet){
 	    	if(alpha<beta){
-	    		dTheta = -40- (alpha+beta)/2;
+	    		dTheta = -20- (alpha+beta)/2;
 	    		isdThetaSet = true;
 	    	} else {
 	    		dTheta = 130- (alpha+beta)/2;
@@ -183,68 +191,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param odometer Odometer used to get and set information about the robot's position
 	 * @param distance Distance read by the US sensor
 	 */
-	public static void risingEdge(Odometer odometer, double distance){
-		  MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-	      MainProject.rightMotor.setSpeed(ROTATE_SPEED);
-	      
-	      if(distance > d-k && !isAlphaOneSet){
-	    	  alpha1 = odometer.getTheta();
-	    	  isAlphaOneSet = true;
-	      }
-	      
-	      if(distance>d+k && isAlphaOneSet && !isAlpha2Set){
-	    	  alpha2 = odometer.getTheta();
-	    	  isAlpha2Set = true;
-	      }
-	      
-	      if(isAlphaOneSet && isAlpha2Set){
-	    	  alpha = (alpha1 + alpha2)/2;
-	    	  isAlphaSet = true;
-	      }
-	      //Turn until the first rising edge is detected
-	      if(isAlphaSet && distance>minDistance){
-	    	  isFirstTurnDone = true;
-	      } else {
-		      MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-	    	  MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-	      }
-	      
-	      if(isFirstTurnDone && odometer.getTheta()<minTheta){
-	    	  isInPosition =true;
-	      }
-	      
-	      if(distance>d-k && isFirstTurnDone && !isBeta1Set && isInPosition){
-	    	  beta1 = odometer.getTheta();
-	    	  isBeta1Set = true;
-	      }
-	      
-	      if(distance>d+k && isBeta1Set && !isBeta2Set){
-	    	  beta2 = odometer.getTheta();
-	    	  isBeta2Set = true;
-	      }
-	      
-	   	  if(isBeta1Set && isBeta2Set){
-	   		  beta = (beta1+beta2)/2;
-	   		  isBetaSet = true;
-	   	  }
-	   	  
-	   	  //turn until the second rising edge is detected
-	   	  if(isFirstTurnDone && !isBetaSet){
-	    	  MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
-	    	  MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
-	      }
-
-	   	  if(isAlphaSet && isBetaSet){
-	   		  if(alpha<beta){
-	   			  dTheta = 115- (alpha+beta)/2;
-	   			  isdThetaSet = true;
-	   		  }
-	   		  else{
-	   			  dTheta = 295- (alpha+beta)/2;
-	   			  isdThetaSet = true;
-	   		  }
-	   	  }	  
-	}
+	
 	
 	//methods borrowed from pervious lab
 	private static int convertDistance(double radius, double distance) {
@@ -289,9 +236,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 			if(isBetaSet && isAlphaSet){
 				adjust(odometer);
 			}
-			else{
-				risingEdge(this.odometer, distance);
-			}
+			
 		}
 		
 	}

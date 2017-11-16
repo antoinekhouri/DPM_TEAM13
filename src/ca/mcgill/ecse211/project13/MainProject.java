@@ -27,8 +27,11 @@ import org.json.simple.parser.ParseException;
 
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 /**
- * This is the main class that will run the robot. It will run all the threads that are required
+ * This is the main class that will run the robot. It will run all the threads and call all
+ * the methods that are required
  * for the robot to performed the desired actions.
+ * This class implements a Finite State Machine in order to determine what actions the robot
+ * should take and the sequence of actions required
  * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */
@@ -66,7 +69,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.37";
+	private static final String SERVER_IP = "192.168.2.8";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -88,6 +91,15 @@ public class MainProject {
 		return currState.toString();
 	}
 	@SuppressWarnings("unused")
+	/**
+	 * Main method that uses wifi data as input as well as implements the state based logic
+	 * for this project.
+	 * @param args unused 
+	 * @throws InterruptedException 
+	 * @throws UnknownHostException 
+	 * @throws IOException
+	 * @throws ParseException
+	 */
 	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException, ParseException {
 
 		boolean isZipLineDiagonal = false;
@@ -333,7 +345,7 @@ public class MainProject {
 				trav.traverse(XC_final,YC_final);
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
 						colorDataRight);
-				buttonChoice = Button.waitForAnyPress();
+//				buttonChoice = Button.waitForAnyPress();
 				//				if(buttonChoice == Button.ID_ESCAPE){
 				//					setState(State.Done);
 				//					break;
@@ -427,13 +439,13 @@ public class MainProject {
 					 * Definition of the avoid method 
 					 */
 					public void run() {
-						@SuppressWarnings("unused")
-						PController pController = new PController(bandCenter, bandWidth);
+//						@SuppressWarnings("unused")
+//						PController pController = new PController(bandCenter, bandWidth);
 						@SuppressWarnings("unused")
 						float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data are returned
 
 						int option = 0;
-						Printer.printMainMenu(); // Set up the display on the EV3 screen
+//						Printer.printMainMenu(); // Set up the display on the EV3 screen
 						while (option == 0) // and wait for a button press. The button
 							option = Button.waitForAnyPress(); // ID (option) determines what type of control to use
 					}
