@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.project13;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 /**
  * This is the class that runs the odometer that is polled and updated by other classes.
+ * The position of the robot is update based on each motor's tacho count difference.
  * @author DPM fall 2017 profs
  *
  */

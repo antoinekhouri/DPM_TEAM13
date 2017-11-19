@@ -6,7 +6,9 @@ package ca.mcgill.ecse211.project13;
 
 import lejos.hardware.lcd.TextLCD;
 /**
- * This class is used to display the odometry information on the LCD screen
+ * This class is used to display the odometry information on the LCD screen.
+ * It displays the robot's current X & Y positions as well as it's current Theta angle.
+ * It also displays what state the robot is in.
  * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */

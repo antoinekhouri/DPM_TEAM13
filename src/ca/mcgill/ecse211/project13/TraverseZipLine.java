@@ -4,7 +4,10 @@ package ca.mcgill.ecse211.project13;
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 /**
- * This class is what is used to make the robot attach to the zip line, traverse it and land
+ * This class is what is used to make the robot attach to the zip line, traverse it and land.
+ * First, the robot aligns with the zipline. Then it moves forward a specified distance before 
+ * starting the pulley motor. Once the pulley motor is started, the robot attaches to the zip line 
+ * and traverses it. Once the light sensors detect that the robot has landed, all 3 motors stop.
  * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */
@@ -36,7 +39,12 @@ public class TraverseZipLine {
 		this.colorData = colorData;
 	}
 	/**
-	 * Method that gets the robot to properly traverse the zip line & land
+	 * This method first aligns the robot with xC and yC, then moves the robot forward 50cm,
+	 * then starts the pulley motor and sets it to go forward. Once that is done, the robot
+	 * attaches to the zip line and starts moving forward. Once the light sensors detect that the robot
+	 * has landed, it makes all 3 motors move 25 cm forward and then stops all 3 motors.
+	 * @param xC ZipLine's starting X coordinate
+	 * @param yC Zipline's starting Y coordinate
 	 */
 	public void traverse(int xC, int yC){
 		double theta;
@@ -179,6 +187,14 @@ public class TraverseZipLine {
 		MainProject.rightMotor.stop(true);
 		MainProject.leftMotor.stop(true);
 	}
+	/**
+	 * Same turnTo() method taken from navigation.java
+	 * @param theta angle the robot is turning to
+	 * @param odometer odomter object used to poll the robot's current position
+	 * @param leftRadius left wheel's radius
+	 * @param rightRadius right wheel's radius
+	 * @param width distance between the two wheels
+	 */
 	public void turnTo(double theta, Odometer odometer, double leftRadius, double rightRadius,
 			double width) {
 

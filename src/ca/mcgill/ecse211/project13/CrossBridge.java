@@ -2,12 +2,27 @@ package ca.mcgill.ecse211.project13;
 
 import ca.mcgill.ecse211.project13.Odometer;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+/**
+ * This class implements the bridge crossing part of the project. In the MainProject class, 
+ * after the robot is called to navigate to the start point of the bridge, the cross() method
+ * of this class will be called to cross the bridge. The current implementation only supports
+ * a corner shaped bridge, not a straight line bridge. The implementation first traverses the X
+ * or Y portion of the bridge, depending on the bridge's shape, then turns 90 degrees in the appropriate 
+ * direction and traverse the second portion of the bridge.
+ * @author antoinekhouri
+ *
+ */
 
 public class CrossBridge {
 	private static final double tileLength = 30.48;
 	private static final int FORWARD_SPEED = 150;
 	private static final int ROTATE_SPEED = 50;
-
+/**
+ * This method only supports a non straight-line bridge, i.e. a corner shaped bridge.
+ * @param endX the X coordinate of the end of the bridge
+ * @param endY the Y coordinate of the end of the bridge
+ * @param odometer the odometer used to poll the robot's current position.
+ */
 	public void cross(int endX, int endY, Odometer odometer){
 		
 		if(endY*tileLength > odometer.getY())	{	
@@ -32,6 +47,17 @@ public class CrossBridge {
 	    MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, distance), true);
 	    MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, distance), false);
 	}
+	/**
+	 * This turning method is the same as the one used in navigation, as we
+	 * realized it could simply be re-used here
+	 * @param theta angle to turn to
+	 * @param odometer	odometer used to poll robot's current position
+	 * @param rightMotor right motor of the robot
+	 * @param leftMotor left motor of the robot
+	 * @param leftRadius robot's left wheel's radius
+	 * @param rightRadius robot's right wheel's radius
+	 * @param width distance between the two wheels
+	 */
 	private static void turnTo (double theta,Odometer odometer, EV3LargeRegulatedMotor rightMotor, EV3LargeRegulatedMotor leftMotor,
 			double leftRadius, double rightRadius, double width){
 

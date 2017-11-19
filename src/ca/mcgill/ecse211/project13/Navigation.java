@@ -3,18 +3,26 @@ package ca.mcgill.ecse211.project13;
 
 
 
-import LocalizationTest.LocalizationTestMain;
+
 import lejos.hardware.Sound;
 import lejos.robotics.SampleProvider;
 
 
-
+/**
+ * This class implements the navigation logic for this project. There are two navigation methods,
+ * one in the case that the zipline is vertical, and another one that covers all the cases. 
+ * This is done because the implementation makes the robot go up the X axis and then the Y axis,
+ * so if the zip line is vertical, and the robot moves up the X axis first then it will run into
+ * the zip line when trying to navigate to the proper Y coordinate.
+ * @author Antoine Khouri, Nusaiba Radi, Veronica Nasseem, Nikki Daly
+ *
+ */
 public class Navigation implements UltrasonicController {
 	// Constants and variables
 	private static final int FORWARD_SPEED = 170;
 	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.005);
 	private static final int ROTATE_SPEED = 50;
-	private static final int ROTATE_SPEED_Right = (int) (ROTATE_SPEED*1.005);
+	private static final int ROTATE_SPEED_Right = ROTATE_SPEED;
 	private static final double tileLength = 30.48;
 	private double minDistance = 0;
 	private Odometer odometer;
@@ -41,11 +49,12 @@ public class Navigation implements UltrasonicController {
 	private double xCounter;
 	private double yCounter;
 	private boolean isDoneWithY = false;
-	/** 
-	 * This constructor is simply used in order to indicate to the system whether or not it will
-	 * require wall avoidance.
-	 * @param isAvoidingWall a boolean that indicates whether or not the system will require to avoid a wall
-	 * @return nothing
+	/**
+	 * Default constructor
+	 * @param colorSensorLeft left color sensor
+	 * @param colorDataLeft left color sensor's data buffer
+	 * @param colorSensorRight right color sensor
+	 * @param colorDataRight right color sensor's data buffer
 	 */
 	public Navigation(SampleProvider colorSensorLeft, float[] colorDataLeft, SampleProvider colorSensorRight
 			, float[] colorDataRight) {
@@ -66,8 +75,9 @@ public class Navigation implements UltrasonicController {
 	 * @param width Double representing the distance between the two wheels, used for the robot movement
 	 * @param x0 destination X coordinate
 	 * @param y0 destination Y coordinate
-	 * @param xC zip line start X coordinate
-	 * @param yC zip line start y coordinate
+	 * @param originalX the original X coordinate the robot is at when the method is called (used for X counter)
+	 * @param originalY the original Y coordinate the robot is at when the method is called (used for Y counter)
+	 * @param uspoller the poller object used by the US sensor
 	 */
 	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
 			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller
@@ -224,7 +234,23 @@ public class Navigation implements UltrasonicController {
 
 
 
-	}
+ 	}
+	/**
+	 * Alternative travel method. It works similarly to the previous one, the only difference being
+	 * that here, the robot travels on the Y axis before the X axis. This method is called when the zipline 
+	 * is in a vertical position, so that the robot has no issues navigating to the aligning point
+	 * @param usDistance SampleProvider used by the ultrasonic poller
+	 * @param odometer Odometer used to get info about the current position and orientation of the robot
+	 * @param leftRadius Double representing the left wheel radius, used for the wheel movement
+	 * @param rightRadius Double representing the right wheel radius, used for the wheel movement
+	 * @param width Double representing the distance between the two wheels, used for the robot movement
+	 * @param x0 destination X coordinate
+	 * @param y0 destination Y coordinate
+	 * @param originalX the original X coordinate the robot is at when the method is called (used for X counter)
+	 * @param originalY the original Y coordinate the robot is at when the method is called (used for Y counter)
+	 * @param uspoller the poller object used by the US sensor
+	 * @param isVertical boolean that determines whether or not the zipline is vertical
+	 */
 	public void travelTo(SampleProvider usDistance, Odometer odometer, double leftRadius,
 			double rightRadius, double width, double x0, double y0,double originalX, double originalY, UltrasonicPoller uspoller
 			, boolean isVertical) {
@@ -392,6 +418,14 @@ public class Navigation implements UltrasonicController {
 	 * @param width Double representing the distance between the two wheels, used for the robot movement
 	 */
 	// Helper method to turn the robot to a given angle
+	/**
+	 * This method turns the robot to the desired (calculated in travelTo() method) angle
+	 * @param theta angle the robot is turning to
+	 * @param odometer odomter object used to poll the robot's current position
+	 * @param leftRadius left wheel's radius
+	 * @param rightRadius right wheel's radius
+	 * @param width distance between the two wheels
+	 */
 	public void turnTo(double theta, Odometer odometer, double leftRadius, double rightRadius,
 			double width) {
 
