@@ -54,6 +54,7 @@ public class MainProject {
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S1");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S2");
+	private static final Port lsFront = LocalEV3.get().getPort("S4");
 	public static final EV3LargeRegulatedMotor leftMotor =
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	public static final EV3LargeRegulatedMotor rightMotor =
@@ -66,7 +67,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.37";
+	private static final String SERVER_IP = "192.168.2.5";
 	private static final int TEAM_NUMBER = 13;
 
 	// Enable/disable printing of debug info from the WiFi class
@@ -243,6 +244,11 @@ public class MainProject {
 		SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
 		SampleProvider colorValueRight = colorSensorRight.getMode("Red");
 		float[] colorDataRight = new float[3];
+		
+		@SuppressWarnings("resource")
+		SensorModes colorSensorFront = new EV3ColorSensor(lsFront);
+		SampleProvider colorValueFront = colorSensorRight.getMode("Red");
+		float[] colorDataFront = new float[3];
 
 		int position = 4;
 
