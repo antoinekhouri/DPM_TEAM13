@@ -1,12 +1,7 @@
-package ca.mcgill.ecse211.project13;
+package SearchFlag;
 
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
-/**
- * This is the class that runs the odometer that is polled and updated by other classes.
- * The position of the robot is update based on each motor's tacho count difference.
- * @author DPM fall 2017 profs
- *
- */
+
 public class Odometer extends Thread {
   // robot position
   private double x;
@@ -38,8 +33,8 @@ public class Odometer extends Thread {
   }
   /**
    * This is where the odometer thread is run, using the run() method. 
-   *
-   *
+   * @param none
+   * @return none
    */
   // run method (required for Thread)
   public void run() {
@@ -65,12 +60,12 @@ public class Odometer extends Thread {
 
         nowTachoL = leftMotor.getTachoCount();
         nowTachoR = rightMotor.getTachoCount();
-        distL = (3.14159 * MainProject.WHEEL_RADIUS * (nowTachoL - lastTachoL) / 180);
-        distR = (3.14159 * MainProject.WHEEL_RADIUS * (nowTachoR - lastTachoR) / 180)/1.003;
+        distL = 3.14159 * SearchFlagMainTest.WHEEL_RADIUS * (nowTachoL - lastTachoL) / 180;
+        distR = 3.14159 * SearchFlagMainTest.WHEEL_RADIUS * (nowTachoR - lastTachoR) / 180;
         lastTachoL = nowTachoL;
         lastTachoR = nowTachoR;
         deltaD = 0.5 * (distL + distR);
-        deltaT = (distL - distR) / MainProject.TRACK;
+        deltaT = (distL - distR) / SearchFlagMainTest.TRACK;
         this.setTheta(this.theta += (deltaT * 57.2598));
         if (theta >= 360) {
           this.setTheta(theta - 360);

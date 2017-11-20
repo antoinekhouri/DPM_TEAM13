@@ -37,6 +37,7 @@ public class LightLocalizer {
 	private double finalX;
 	private double finalY;
 	private double finalTheta;
+	
 	private boolean isZipLineLocalization = false;
 	// private EV3LargeRegulatedMotor MainProject.leftMotor, MainProject.rightMotor;
 	
@@ -125,13 +126,13 @@ public class LightLocalizer {
 
 		//reached a black line so stop
 		if(getColorDataLeft() < lightDensity ){
-			MainProject.leftMotor.stop(true);
+			MainProject.leftMotor.setSpeed(0);
 			isLeftSensor = true;
 			Sound.beep();
 		}
 		else if(getColorDataRight()< lightDensity){
 
-			MainProject.rightMotor.stop(true);			
+			MainProject.rightMotor.setSpeed(0);			
 			isRightSensor = true;
 			Sound.beep();
 		}
@@ -145,13 +146,13 @@ public class LightLocalizer {
 				}
 			}
 			Sound.beep();
-			MainProject.rightMotor.stop(false);
+			MainProject.rightMotor.setSpeed(0);
 			if(!isAfter) {
 				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
 			}else {
 				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1), false);
 			}
-			MainProject.rightMotor.stop(false);
+			MainProject.rightMotor.setSpeed(0);
 			isRightSensor = true;
 		}
 		else if(isRightSensor){
@@ -164,14 +165,14 @@ public class LightLocalizer {
 				}
 			}
 			Sound.beep();
-			MainProject.leftMotor.stop(false);
+			MainProject.leftMotor.setSpeed(0);
 			if(!isAfter) {
 				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
 			}else {
 				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1), false);
 			}
 
-			MainProject.leftMotor.stop(false);
+			MainProject.leftMotor.setSpeed(0);
 			isLeftSensor = true;
 		}
 		if(isRightSensor && isLeftSensor && !isAfter){
@@ -208,12 +209,12 @@ public class LightLocalizer {
 
 			//reached a black line so stop
 			if(getColorDataLeft() < lightDensity ){
-				MainProject.leftMotor.stop(true);
+				MainProject.leftMotor.setSpeed(0);
 				isLeftSensor = true;
 				Sound.beep();
 			}
 			else if(getColorDataRight()< lightDensity){
-				MainProject.rightMotor.stop(true);
+				MainProject.rightMotor.setSpeed(0);
 				isRightSensor = true;
 				Sound.beep();
 			}
@@ -226,9 +227,9 @@ public class LightLocalizer {
 						e.printStackTrace();
 					}
 				}
-				MainProject.rightMotor.stop(false);
+				MainProject.rightMotor.setSpeed(0);
 				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -0.5), false);
-				MainProject.rightMotor.stop(false);
+				MainProject.rightMotor.setSpeed(0);
 				isRightSensor = true;
 				Sound.beep();
 			}
@@ -241,9 +242,9 @@ public class LightLocalizer {
 						e.printStackTrace();
 					}
 				}
-				MainProject.leftMotor.stop(false);
+				MainProject.leftMotor.setSpeed(0);
 				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -0.5), false);
-				MainProject.leftMotor.stop(false);
+				MainProject.leftMotor.setSpeed(0);
 				isLeftSensor = true;
 				Sound.beep();
 			}
@@ -269,8 +270,8 @@ public class LightLocalizer {
 					MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), false);
 					isOkay = false;
 				}else if(theta !=0 && theta!=180){
-					MainProject.leftMotor.stop(false);
-					MainProject.rightMotor.stop(false);
+					MainProject.leftMotor.setSpeed(0);
+					MainProject.rightMotor.setSpeed(0);
 					isOkay = false;
 				}
 				if (isAfter){
@@ -298,7 +299,7 @@ public class LightLocalizer {
 
 					//reached a black line so stop
 					if(getColorDataLeft() < lightDensity ){
-						MainProject.leftMotor.stop(false);
+						MainProject.leftMotor.setSpeed(0);
 						isLeftSensor = true;
 						Sound.beep();
 						while(getColorDataRight()>lightDensity){
@@ -310,12 +311,12 @@ public class LightLocalizer {
 							}
 						}
 						Sound.beep();
-						//					MainProject.rightMotor.stop(false);
+						//					MainProject.rightMotor.setSpeed(0);
 						//					MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
-						MainProject.rightMotor.stop(false);
+						MainProject.rightMotor.setSpeed(0);
 					}
 					else if(getColorDataRight()< lightDensity){
-						MainProject.rightMotor.stop(false);
+						MainProject.rightMotor.setSpeed(0);
 						isRightSensor = true;
 						Sound.beep();
 						while(getColorDataLeft()>lightDensity){
@@ -327,9 +328,9 @@ public class LightLocalizer {
 							}
 						}
 						Sound.beep();
-						//					MainProject.leftMotor.stop(false);
+						//					MainProject.leftMotor.setSpeed(0);
 						//					MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -1.5), false);
-						MainProject.leftMotor.stop(false);
+						MainProject.leftMotor.setSpeed(0);
 					}
 				}
 			}
@@ -339,7 +340,10 @@ public class LightLocalizer {
 		odometer.setX(x*tileLength);
 		odometer.setY(y*tileLength);
 		odometer.setTheta(finalTheta);
-
+		isDone = true;
+	}
+	public boolean getIsDone(){
+		return this.isDone;
 	}
 
 	// conversion methods

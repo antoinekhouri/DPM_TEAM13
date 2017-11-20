@@ -60,7 +60,10 @@ public class TraverseZipLine {
 			originalTheta = this.odometer.getTheta();
 			isOriginalThetaSet = true;
 		}
-
+		if(Math.abs(odometer.getTheta()-90)<10){
+		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), true);
+		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), false);
+		}
 		if((Math.abs(xC*tileLength-odometer.getX()))<10 ){
 	    	if(yC*tileLength-odometer.getY()>0){
 	    		theta = 0;

@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.project13;
+package SearchFlag;
 
 
 import ca.mcgill.ecse211.project13.UltrasonicController;	
@@ -14,7 +14,7 @@ import lejos.hardware.Sound;
  * @author Antoine Khouri, Nusaiba Radi, Veronica Nasseem, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */
-public class UltrasonicLocalizer implements UltrasonicController {
+public class UltrasonicLocalizer implements UltrasonicController, SearchFlag.UltrasonicController {
 	
 	
 	
@@ -66,11 +66,11 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	 * @param distance distance read by the US sensor
 	 */
 	public static void fallingEdge(Odometer odometer, double distance){
-		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-	    MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+		SearchFlagMainTest.leftMotor.setSpeed(ROTATE_SPEED);
+	    SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED);
 	    
-//	    MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-//    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), false);
+//	    SearchFlagMainTest.leftMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
+//    	SearchFlagMainTest.rightMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), false);
 
 	    if(distance<d+k && !isAlphaOneSet){
 	    	alpha1 = odometer.getTheta();
@@ -93,8 +93,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    	isFirstTurnDone = true;
 	    	
 	    } else {
-	    	MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
-	    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 360.0), true);
+	    	SearchFlagMainTest.leftMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
+	    	SearchFlagMainTest.rightMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
 	    }
 	      
 	    if(distance<d+k && isFirstTurnDone && !isBeta1Set){
@@ -116,8 +116,8 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	   	}
 	   
 	    if(isFirstTurnDone && !isBetaSet){
-	    	MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
-	    	MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -360.0), true);
+	    	SearchFlagMainTest.leftMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -360.0), true);
+	    	SearchFlagMainTest.rightMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -360.0), true);
 	    }
 	    
 	    if(isAlphaSet && isBetaSet){
@@ -142,11 +142,11 @@ public class UltrasonicLocalizer implements UltrasonicController {
   			  dTheta = dTheta - 360;
   		  }
   		  
-  		  MainProject.rightMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -odometer.getTheta()-dTheta), true);
-  		  MainProject.leftMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -odometer.getTheta()-dTheta), false);
+  		  SearchFlagMainTest.rightMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -odometer.getTheta()-dTheta), true);
+  		  SearchFlagMainTest.leftMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -odometer.getTheta()-dTheta), false);
   		  if(this.position ==1 || this.position ==3){
-  			  MainProject.rightMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90), true);
-  	  		  MainProject.leftMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90), false);
+  			  SearchFlagMainTest.rightMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -90), true);
+  	  		  SearchFlagMainTest.leftMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, -90), false);
   		  }
   		  odometer.setTheta(0);
   		  
@@ -154,8 +154,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
   	  }
 	}
 	public boolean getIsDone() {
-		boolean isDone = !keepGoing;
-		return isDone;
+		return keepGoing;
 	}
 	
 		// initialize all the global variables

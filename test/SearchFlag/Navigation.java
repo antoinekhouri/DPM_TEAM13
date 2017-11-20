@@ -1,4 +1,4 @@
-package ca.mcgill.ecse211.project13;
+package SearchFlag;
 
 
 
@@ -20,7 +20,7 @@ import lejos.robotics.SampleProvider;
 public class Navigation implements UltrasonicController {
 	// Constants and variables
 	private static final int FORWARD_SPEED = 170;
-	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.003);
+	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.005);
 	private static final int ROTATE_SPEED = 50;
 	private static final int ROTATE_SPEED_Right = ROTATE_SPEED;
 	private static final double tileLength = 30.48;
@@ -89,14 +89,14 @@ public class Navigation implements UltrasonicController {
 		while(!isDoneWithY){
 			if(yCounter==y0){
 				isDoneWithY = true;
-				MainProject.rightMotor.stop(true);
-				MainProject.leftMotor.stop(true);
+				SearchFlagMainTest.rightMotor.stop(true);
+				SearchFlagMainTest.leftMotor.stop(true);
 			}
 			if(xCounter==x0){
 				isDoneWithX = true;
 			}
-//			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-//			MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
+			SearchFlagMainTest.leftMotor.setSpeed(ROTATE_SPEED);
+			SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED_Right);
 			if(!isDoneWithX){
 				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
 					xDistance = 0;
@@ -126,12 +126,11 @@ public class Navigation implements UltrasonicController {
 				}
 			}
 
-			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
-			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
+			SearchFlagMainTest.leftMotor.setSpeed(FORWARD_SPEED);
+			SearchFlagMainTest.rightMotor.setSpeed(FORWARD_SPEED_Right);
 
-			MainProject.rightMotor.forward();
-			MainProject.leftMotor.forward();
-			
+			SearchFlagMainTest.leftMotor.forward();
+			SearchFlagMainTest.rightMotor.forward();
 
 			try {
 				Thread.sleep(2000);
@@ -151,7 +150,7 @@ public class Navigation implements UltrasonicController {
 
 
 			if(getColorDataLeft() < lightDensity ){
-				//              MainProject.leftMotor.setSpeed(0);                   
+				//              SearchFlagMainTest.leftMotor.setSpeed(0);                   
 				isLeftSensor = true;
 				Sound.beep();
 				//                while(getColorDataRight() > lightDensity){
@@ -163,11 +162,11 @@ public class Navigation implements UltrasonicController {
 				//                    }
 				//                }
 				Sound.beep();
-				//              MainProject.rightMotor.setSpeed(0);
+				//              SearchFlagMainTest.rightMotor.setSpeed(0);
 				isRightSensor = true;
 			}
 			else if(getColorDataRight()< lightDensity){
-				//              MainProject.rightMotor.setSpeed(0);
+				//              SearchFlagMainTest.rightMotor.setSpeed(0);
 				isRightSensor = true;
 				Sound.beep();
 				//                while(getColorDataLeft() > lightDensity){
@@ -179,7 +178,7 @@ public class Navigation implements UltrasonicController {
 				//                    }
 				//                }
 				Sound.beep();
-				//              MainProject.leftMotor.setSpeed(0);
+				//              SearchFlagMainTest.leftMotor.setSpeed(0);
 				isLeftSensor = true;
 			}
 
@@ -190,8 +189,8 @@ public class Navigation implements UltrasonicController {
 				isRightSensor =false;
 			}
 			if(isReady){
-				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), true);
-				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				SearchFlagMainTest.leftMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, -2), true);
+				SearchFlagMainTest.rightMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, -2), false);
 
 
 
@@ -221,8 +220,8 @@ public class Navigation implements UltrasonicController {
 					odometer.setY(yCounter*tileLength);
 					if(yCounter==y0){
 						isDoneWithY = true;
-						MainProject.rightMotor.stop(true);
-						MainProject.leftMotor.stop(true);
+						SearchFlagMainTest.rightMotor.stop(true);
+						SearchFlagMainTest.leftMotor.stop(true);
 					}
 				}
 
@@ -264,16 +263,16 @@ public class Navigation implements UltrasonicController {
 		while(!isDoneWithX){
 			if(yCounter==y0){
 				isDoneWithY = true;
-				MainProject.rightMotor.stop(true);
-				MainProject.leftMotor.stop(true);
+				SearchFlagMainTest.rightMotor.stop(true);
+				SearchFlagMainTest.leftMotor.stop(true);
 			}
 			if(xCounter==x0){
 				isDoneWithX = true;
-				MainProject.rightMotor.stop(true);
-				MainProject.leftMotor.stop(true);
+				SearchFlagMainTest.rightMotor.stop(true);
+				SearchFlagMainTest.leftMotor.stop(true);
 			}
-			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-			MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
+			SearchFlagMainTest.leftMotor.setSpeed(ROTATE_SPEED);
+			SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED_Right);
 			if(isDoneWithY){
 				if (Math.abs(xDistance) < 10) { // If the destination is on the same X axis, do not rotate
 					xDistance = 0;
@@ -304,11 +303,11 @@ public class Navigation implements UltrasonicController {
 				}
 			}
 
-			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
-			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
+			SearchFlagMainTest.leftMotor.setSpeed(FORWARD_SPEED);
+			SearchFlagMainTest.rightMotor.setSpeed(FORWARD_SPEED_Right);
 
-			MainProject.leftMotor.forward();
-			MainProject.rightMotor.forward();
+			SearchFlagMainTest.leftMotor.forward();
+			SearchFlagMainTest.rightMotor.forward();
 
 			try {
 				Thread.sleep(2000);
@@ -328,7 +327,7 @@ public class Navigation implements UltrasonicController {
 
 
 			if(getColorDataLeft() < lightDensity ){
-				//              MainProject.leftMotor.setSpeed(0);                   
+				//              SearchFlagMainTest.leftMotor.setSpeed(0);                   
 				isLeftSensor = true;
 				Sound.beep();
 				//                while(getColorDataRight() > lightDensity){
@@ -340,11 +339,11 @@ public class Navigation implements UltrasonicController {
 				//                    }
 				//                }
 				Sound.beep();
-				//              MainProject.rightMotor.setSpeed(0);
+				//              SearchFlagMainTest.rightMotor.setSpeed(0);
 				isRightSensor = true;
 			}
 			else if(getColorDataRight()< lightDensity){
-				//              MainProject.rightMotor.setSpeed(0);
+				//              SearchFlagMainTest.rightMotor.setSpeed(0);
 				isRightSensor = true;
 				Sound.beep();
 				//                while(getColorDataLeft() > lightDensity){
@@ -356,7 +355,7 @@ public class Navigation implements UltrasonicController {
 				//                    }
 				//                }
 				Sound.beep();
-				//              MainProject.leftMotor.setSpeed(0);
+				//              SearchFlagMainTest.leftMotor.setSpeed(0);
 				isLeftSensor = true;
 			}
 
@@ -367,15 +366,15 @@ public class Navigation implements UltrasonicController {
 				isRightSensor =false;
 			}
 			if(isReady){
-				MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), true);
-				MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, -2), false);
+				SearchFlagMainTest.leftMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, -2), true);
+				SearchFlagMainTest.rightMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, -2), false);
 
 
 
 				if(yCounter==y0){
 					isDoneWithY = true;
-					MainProject.rightMotor.stop(true);
-					MainProject.leftMotor.stop(true);
+					SearchFlagMainTest.rightMotor.stop(true);
+					SearchFlagMainTest.leftMotor.stop(true);
 				}
 				if (!isDoneWithY){
 					if(Math.abs(odometer.getTheta())<10 || Math.abs(odometer.getTheta())>350){
@@ -430,8 +429,8 @@ public class Navigation implements UltrasonicController {
 	public void turnTo(double theta, Odometer odometer, double leftRadius, double rightRadius,
 			double width) {
 
-		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
-		MainProject.rightMotor.setSpeed(ROTATE_SPEED_Right);
+		SearchFlagMainTest.leftMotor.setSpeed(ROTATE_SPEED);
+		SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED_Right);
 		while (theta - odometer.getTheta() > 360) {
 			theta = theta - 360;
 		}
@@ -440,14 +439,14 @@ public class Navigation implements UltrasonicController {
 		}
 		if ((theta - odometer.getTheta()) > 180) {
 
-			MainProject.rightMotor
+			SearchFlagMainTest.rightMotor
 			.rotate(convertAngle(rightRadius, width, 360 - (theta - odometer.getTheta())), true);
-			MainProject.leftMotor
+			SearchFlagMainTest.leftMotor
 			.rotate((-convertAngle(leftRadius, width, 360 - (theta - odometer.getTheta()))), false);
 		} else {
-			MainProject.leftMotor.rotate((convertAngle(leftRadius, width, theta - odometer.getTheta())),
+			SearchFlagMainTest.leftMotor.rotate((convertAngle(leftRadius, width, theta - odometer.getTheta())),
 					true);
-			MainProject.rightMotor.rotate(-convertAngle(rightRadius, width, theta - odometer.getTheta()),
+			SearchFlagMainTest.rightMotor.rotate(-convertAngle(rightRadius, width, theta - odometer.getTheta()),
 					false);
 		}
 
@@ -497,10 +496,10 @@ public class Navigation implements UltrasonicController {
 		return 0;
 	}
 
-	@Override
-	public double readUSError() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//	@Override
+//	public double readUSError() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 }
