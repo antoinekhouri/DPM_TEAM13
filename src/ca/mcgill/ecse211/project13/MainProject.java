@@ -50,7 +50,7 @@ public class MainProject {
 		NavigatingBack,
 		Done
 	}
-	//main
+
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
 	public static final double TRACK = 9.40;
@@ -136,8 +136,12 @@ public class MainProject {
 		int bridgeEndY=0;
 		int zipLineRedX=0;
 		int zipLineRedY=0;
+		//lower left
 		int searchZoneX=0;
 		int searchZoneY=0;
+		//upperright
+		int searchZoneX2=0;
+		int searchZoneY2=0;
 		boolean isZipLineVertical = false;
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, !ENABLE_DEBUG_WIFI_PRINT);
 
@@ -413,6 +417,10 @@ public class MainProject {
 				}else{
 					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
 				}
+				
+				final SearchFlag search = new SearchFlag();
+				search.detect(searchZoneX, searchZoneY, searchZoneX2, searchZoneY2, odometer);
+				
 				setState(State.Done);
 				break;
 
