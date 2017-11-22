@@ -61,66 +61,66 @@ public class TraverseZipLine {
 			isOriginalThetaSet = true;
 		}
 		if(Math.abs(odometer.getTheta()-90)<10){
-		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), true);
-		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), false);
+			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), true);
+			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 2), false);
 		}
 		if((Math.abs(xC*tileLength-odometer.getX()))<10 ){
-	    	if(yC*tileLength-odometer.getY()>0){
-	    		theta = 0;
-	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		
-	    	}
-	    	else{
-	    		theta = 180;
-	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    	
-	    	}	
-	    }
-	    else if(Math.abs((yC*tileLength-odometer.getY()))<10){
-	    	if(xC*tileLength-odometer.getX()>0){
-	    		theta =90 ;
-	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		
-	    	}
-	    	else{
-	    		theta =270;
-	    		turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-	    		
-	    	}
-	    	
-	    }
-	    else{
-	    	
-			 // if the x and y error is large it will change the angle of the robot
-				if(yC*tileLength > odometer.getY())	{	
-					turnTo(Math.toDegrees(Math.atan((xC*tileLength-odometer.getX())/(yC*tileLength-odometer.getY())))
-							,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-					MainProject.leftMotor.stop(true);
-		    		MainProject.rightMotor.stop(true);
-				}
-				else if(xC*tileLength < odometer.getX()){	
-					turnTo((-1)*Math.toDegrees(Math.atan((yC*tileLength-odometer.getY())/(xC*tileLength
-							-odometer.getX()))) - 90,
-					odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-					MainProject.leftMotor.stop(true);
-		    		MainProject.rightMotor.stop(true);
-				}
-				else	{				
-					turnTo((-1)*Math.toDegrees(Math.atan((yC*tileLength-odometer.getY())/(
-							xC*tileLength-odometer.getX()))) + 90
-							,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
-					MainProject.leftMotor.stop(true);
-		    		MainProject.rightMotor.stop(true);
-				}
-			
-	    }
+			if(yC*tileLength-odometer.getY()>0){
+				theta = 0;
+				turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+
+			}
+			else{
+				theta = 180;
+				turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+
+			}	
+		}
+		else if(Math.abs((yC*tileLength-odometer.getY()))<10){
+			if(xC*tileLength-odometer.getX()>0){
+				theta =90 ;
+				turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+
+			}
+			else{
+				theta =270;
+				turnTo(theta,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+
+			}
+
+		}
+		else{
+
+			// if the x and y error is large it will change the angle of the robot
+			if(yC*tileLength > odometer.getY())	{	
+				turnTo(Math.toDegrees(Math.atan((xC*tileLength-odometer.getX())/(yC*tileLength-odometer.getY())))
+						,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+				MainProject.leftMotor.stop(true);
+				MainProject.rightMotor.stop(true);
+			}
+			else if(xC*tileLength < odometer.getX()){	
+				turnTo((-1)*Math.toDegrees(Math.atan((yC*tileLength-odometer.getY())/(xC*tileLength
+						-odometer.getX()))) - 90,
+						odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+				MainProject.leftMotor.stop(true);
+				MainProject.rightMotor.stop(true);
+			}
+			else	{				
+				turnTo((-1)*Math.toDegrees(Math.atan((yC*tileLength-odometer.getY())/(
+						xC*tileLength-odometer.getX()))) + 90
+						,odometer,MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,MainProject.TRACK);
+				MainProject.leftMotor.stop(true);
+				MainProject.rightMotor.stop(true);
+			}
+
+		}
 		// move forward until you arrive on the zipline
 
 		MainProject.rightMotor.setSpeed(FORWARD_SLOW);
 		MainProject.leftMotor.setSpeed(FORWARD_SLOW);
 
-		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 50), true);
-		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 50), false);
+		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 40), true);
+		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, 40), false);
 
 		MainProject.pulleyMotor.setSpeed(FORWARD_SPEED+100);
 		MainProject.pulleyMotor.forward();
@@ -141,8 +141,8 @@ public class TraverseZipLine {
 			}
 		}
 		Sound.beep();
-//		MainProject.rightMotor.stop(true);
-//		MainProject.leftMotor.stop(true);
+		//		MainProject.rightMotor.stop(true);
+		//		MainProject.leftMotor.stop(true);
 
 		while (getColorData() > lightDensity){
 			try{

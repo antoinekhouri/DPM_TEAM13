@@ -31,7 +31,9 @@ import ca.mcgill.ecse211.WiFiClient.WifiConnection;
  * the methods that are required
  * for the robot to performed the desired actions.
  * This class implements a Finite State Machine in order to determine what actions the robot
- * should take and the sequence of actions required
+ * should take and the sequence of actions required. The state machine is described by the state diagram in week 5's
+ * software document
+ *
  * @author Veronica Nasseem, Nusaiba Radi, Antoine Khouri, Nikki Daly, Diana Serra, Asma Abdullah
  *
  */
@@ -54,7 +56,7 @@ public class MainProject {
 
 	private static State currState;
 	public static final double WHEEL_RADIUS = 2.1;
-	public static final double TRACK = 9.40;
+	public static final double TRACK = 9.24;
 	private static final Port usPort = LocalEV3.get().getPort("S3");
 	private static final Port lsPortLeft = LocalEV3.get().getPort("S1");
 	private static final Port lsPortRight = LocalEV3.get().getPort("S2");
@@ -71,7 +73,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.27";
+	private static final String SERVER_IP = "192.168.2.13";
 
 
 	private static final int TEAM_NUMBER = 13;
@@ -109,6 +111,7 @@ public class MainProject {
 
 		boolean isZipLineDiagonal = false;
 		int startPosition=0;
+		boolean isGoingRight = false;
 		double finalX=0;
 		double finalY=0;
 		double finalTheta=0;
@@ -159,11 +162,13 @@ public class MainProject {
 		int redTeam = ((Long) data.get("RedTeam")).intValue();
 		if(redTeam == 13){
 			isGreenTeam = false;
+		}else{
+			int greenTeam = ((Long) data.get("GreenTeam")).intValue();
+			if(greenTeam == 13){
+				isGreenTeam = true;
+			}
 		}
-		int greenTeam = ((Long) data.get("GreenTeam")).intValue();
-		if(greenTeam == 13){
-			isGreenTeam = true;
-		}
+
 		if(isGreenTeam){
 			friendlyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
 			friendlyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
@@ -182,7 +187,7 @@ public class MainProject {
 			friendlyZoneYEnd = ((Long) data.get("Red_UR_y")).intValue();
 			enemyZoneXStart = ((Long) data.get("Green_LL_x")).intValue();
 			enemyZoneXEnd = ((Long) data.get("Green_UR_x")).intValue();
-			enemyZoneYStart = ((Long) data.get("Green_LL__y")).intValue();
+			enemyZoneYStart = ((Long) data.get("Green_LL_y")).intValue();
 			enemyZoneYEnd = ((Long) data.get("Green_UR_y")).intValue();
 			searchZoneX = ((Long) data.get("SG_LL_x")).intValue();
 			searchZoneY = ((Long) data.get("SG_LL_y")).intValue();
@@ -238,10 +243,10 @@ public class MainProject {
 		}else if(YC_final != zipLineRedY && XC_final!=zipLineRedX){
 			isZipLineDiagonal=true;
 		}
-		
+
 
 		// Wait until user decides to end program
-//		Button.waitForAnyPress();
+		//		Button.waitForAnyPress();
 		setState(State.USLocalizing);
 
 		int X0_var = 0;
@@ -270,7 +275,7 @@ public class MainProject {
 		SensorModes colorSensorRight = new EV3ColorSensor(lsPortRight);
 		SampleProvider colorValueRight = colorSensorRight.getMode("Red");
 		float[] colorDataRight = new float[3];
-		
+
 		@SuppressWarnings("resource")
 		SensorModes colorSensorFront = new EV3ColorSensor(lsFront);
 		SampleProvider colorValueFront = colorSensorRight.getMode("Red");
@@ -278,13 +283,13 @@ public class MainProject {
 
 		int position = 4;
 
-//		do {
-//			t.clear();
-//			t.drawString("Press Enter ", 0, 0);
-//			t.drawString("to start", 0, 1);
-//			buttonChoice = Button.waitForAnyPress();
-//		}
-//		} while (buttonChoice != Button.ID_ENTER);
+		//		do {
+		//			t.clear();
+		//			t.drawString("Press Enter ", 0, 0);
+		//			t.drawString("to start", 0, 1);
+		//			buttonChoice = Button.waitForAnyPress();
+		//		}
+		//		} while (buttonChoice != Button.ID_ENTER);
 		odometer.start();
 		odometryDisplay.start();
 		while(currState != State.Done){
@@ -302,16 +307,16 @@ public class MainProject {
 				// start the ultrasonic localization. Once it is done, it will wait for a button to be pressed
 				// to proceed
 				// if escape is pressed, the program will stop
-								//buttonChoice = Button.waitForAnyPress();
-//								if (buttonChoice == Button.ID_ESCAPE) {
-//									System.exit(0);
-//								}
-//								else{
+				//buttonChoice = Button.waitForAnyPress();
+				//								if (buttonChoice == Button.ID_ESCAPE) {
+				//									System.exit(0);
+				//								}
+				//								else{
 				while(!usLocalizer.getIsDone()){
 					Thread.sleep(1);
 				}
 				setState(State.LightLocalizing);
-//				}
+				//				}
 				//				}
 			}
 			if(currState == State.LightLocalizing){
@@ -321,16 +326,16 @@ public class MainProject {
 				//corner 2: 7,1,0
 				//corner 3: 7,7,180
 				//corner 4: 1,7,180
-//								buttonChoice = Button.waitForAnyPress();
-//								if(buttonChoice == Button.ID_ESCAPE){
-//									setState(State.Done);
-//								}
-//								else{
+				//								buttonChoice = Button.waitForAnyPress();
+				//								if(buttonChoice == Button.ID_ESCAPE){
+				//									setState(State.Done);
+				//								}
+				//								else{
 				while(!lightLocalizer.getIsDone()){
 					Thread.sleep(1);
 				}
 				setState(State.Navigating);
-//								}
+				//								}
 			}
 
 			// create instance of navigation
@@ -341,20 +346,26 @@ public class MainProject {
 			if(currState == State.Navigating){
 				//TODO: implement proper logic for detecting when to go into avoidance
 				final Navigation nav = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				if(!isGreenTeam){
-					if(navX>finalX){
-						navX= navX-1;
+				//				if(!isGreenTeam){
+				//					if(navX>finalX){
+				//						navX= navX-1;
+				//					}else{
+				//						navX = navX+1;
+				//					}
+				//				}
+				if(isGreenTeam){
+					if(isZipLineVertical){
+						nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+								navY,finalX,finalY, usPoller, isZipLineVertical);//1,1 = depending on starting corner
 					}else{
-						navX = navX+1;
+						nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+								navY,finalX,finalY, usPoller);
 					}
-				}
-				if(isZipLineVertical){
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
-							navY,finalX,finalY, usPoller, isZipLineVertical);//1,1 = depending on starting corner
-				}else{
-					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX,
+				} else{
+					nav.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navX-1,
 							navY,finalX,finalY, usPoller);
 				}
+
 
 
 
@@ -377,33 +388,33 @@ public class MainProject {
 				trav.traverse(XC_final,YC_final);
 				LightLocalizer lightLocalizer = new LightLocalizer(odometer, colorValueLeft, colorDataLeft, colorValueRight,
 						colorDataRight);
-//				buttonChoice = Button.waitForAnyPress();
+				//				buttonChoice = Button.waitForAnyPress();
 				//				if(buttonChoice == Button.ID_ESCAPE){
 				//					setState(State.Done);
 				//					break;
 				//				}
-				if(isGreenTeam){
-					if(isZipLineDiagonal){
-						if(zipLineRedX>XC_final && zipLineRedY>YC_final){
-							finalTheta = 90;
-						}else if(zipLineRedX>XC_final && zipLineRedY<YC_final){
-							finalTheta = 180;
-						}else if(zipLineRedX<XC_final && zipLineRedY>YC_final){
-							finalTheta = 270;
-						}else{
-							finalTheta = 0;
-						}
-					}
-					else if(zipLineRedX>XC_final){
-						finalTheta=180;
-					}else if(zipLineRedX<XC_final){
-						finalTheta =0;
-					}else if(zipLineRedY>YC_final){
-						finalTheta=90;
+
+				if(isZipLineDiagonal){
+					if(zipLineRedX>XC_final && zipLineRedY>YC_final){
+						finalTheta = 90;
+					}else if(zipLineRedX>XC_final && zipLineRedY<YC_final){
+						finalTheta = 180;
+					}else if(zipLineRedX<XC_final && zipLineRedY>YC_final){
+						finalTheta = 270;
 					}else{
-						finalTheta=270;
+						finalTheta = 0;
 					}
 				}
+				else if(zipLineRedX>XC_final){
+					finalTheta=180;
+				}else if(zipLineRedX<XC_final){
+					finalTheta =0;
+				}else if(zipLineRedY>YC_final){
+					finalTheta=90;
+				}else{
+					finalTheta=270;
+				}
+
 				lightLocalizer.localize(zipLineEndX, zipLineEndY,finalTheta,true);
 				//				buttonChoice = Button.waitForAnyPress();
 				//				if(buttonChoice == Button.ID_ESCAPE){
@@ -420,14 +431,27 @@ public class MainProject {
 			if(currState == State.CrossingBridge){
 				int bridgeTravelX=0;
 				int bridgeTravelY=0;
+				
+						
+
 				if(!isGreenTeam){
-					bridgeTravelX = bridgeUpperRightX-navX+1;
-					bridgeTravelY = bridgeEndY-bridgeUpperRightY;
+					if(bridgeUpperRightX>navX){
+						isGoingRight = true;
+					}else{
+						isGoingRight = false;
+					}
+					bridgeTravelX = bridgeUpperRightX-navX;
+					bridgeTravelY = bridgeUpperRightY-bridgeEndY;
 				}else{
-					bridgeTravelX = bridgeUpperRightX-navBackX+1;
-					bridgeTravelY = bridgeEndY-bridgeUpperRightY;
+					if(bridgeUpperRightX>navBackX){
+						isGoingRight = true;
+					}else{
+						isGoingRight = false;
+					}
+					bridgeTravelX = bridgeUpperRightX-navBackX;
+					bridgeTravelY = bridgeUpperRightY-bridgeEndY;
 				}
-				cb.cross(bridgeTravelX, bridgeTravelY, odometer);
+				cb.cross(bridgeTravelX, bridgeTravelY, odometer,isGoingRight, bridgeEndX, bridgeEndY, isGreenTeam);
 				if(isGreenTeam){
 					setState(State.GoHome);
 				}
@@ -437,20 +461,28 @@ public class MainProject {
 			}
 			if(currState == State.FlagSearching){
 				final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				if(!isZipLineVertical){
-					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller, isZipLineVertical);
+				if(isGreenTeam){
+					if(!isZipLineVertical){
+						nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller, isZipLineVertical);
+					}else{
+						nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
+					}
 				}else{
-					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
+					if (isGoingRight){
+						nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, bridgeEndX+1, bridgeEndY-1, usPoller, isZipLineVertical);
+					}else{
+						nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, bridgeEndX-1, bridgeEndY-1, usPoller);
+					}
 				}
-				setState(State.NavigatingBack);
+
 				final SearchFlag search = new SearchFlag();
-				search.detect(searchZoneX, searchZoneY, searchZoneX2, searchZoneY2, odometer);
-				
-				setState(State.Done);
-				break;
+				search.detect();
+
+				setState(State.NavigatingBack);
+				//				break;
 
 
-				
+
 			}
 			if(currState == State.FlagSniffing){
 				//TODO: implement light sensor sniffing code
@@ -469,11 +501,20 @@ public class MainProject {
 				setState(State.NavigatingBack);
 			}
 			if(currState == State.NavigatingBack){
-				final Navigation nav3 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				if(!isZipLineVertical){
-					nav3.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navBackX, navBackY, searchZoneX, searchZoneY, usPoller, isZipLineVertical);
+				final Navigation nav5 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
+				if(isZipLineVertical){
+					if(isGreenTeam){
+						nav5.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,
+								navBackX-1, navBackY, searchZoneX, searchZoneY, usPoller);
+					}else{
+						nav5.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK
+								,navBackX, navBackY, searchZoneX, searchZoneY, usPoller, isZipLineVertical);
+					}
 				}else{
-					nav3.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navBackX, navBackY, searchZoneX, searchZoneY, usPoller);
+					if(isGreenTeam){
+						nav5.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,navBackX-1, navBackY
+								, searchZoneX, searchZoneY, usPoller);
+					}
 				}
 				if (isGreenTeam){
 					setState(State.CrossingBridge);
@@ -483,11 +524,21 @@ public class MainProject {
 			}
 			if(currState == State.GoHome){
 				final Navigation nav4 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				if(!isZipLineVertical){
-					nav4.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,finalX, finalY, (int) odometer.getX()/tileLength, (int) odometer.getY()/tileLength, usPoller, isZipLineVertical);
+				if(isGreenTeam){
+					if(isGoingRight){
+						nav4.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,finalX, finalY, bridgeEndX+1, bridgeEndY-1, usPoller, isZipLineVertical);
+					}else{
+						nav4.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,finalX, finalY, bridgeEndX-1, bridgeEndY-1, usPoller, isZipLineVertical);
+					}
 				}else{
-					nav4.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,finalX, finalY, (int) odometer.getX()/tileLength, (int) odometer.getY()/tileLength, usPoller);
+					
+						nav4.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,finalX, finalY, zipLineEndX, zipLineEndY, usPoller, isZipLineVertical);
+					
+					
+					
 				}
+
+
 				setState(State.Done);
 				break;
 			}
@@ -499,13 +550,13 @@ public class MainProject {
 					 * Definition of the avoid method 
 					 */
 					public void run() {
-//						@SuppressWarnings("unused")
-//						PController pController = new PController(bandCenter, bandWidth);
+						//						@SuppressWarnings("unused")
+						//						PController pController = new PController(bandCenter, bandWidth);
 						@SuppressWarnings("unused")
 						float[] usData = new float[usDistance.sampleSize()]; // usData is the buffer in which data are returned
 
 						int option = 0;
-//						Printer.printMainMenu(); // Set up the display on the EV3 screen
+						//						Printer.printMainMenu(); // Set up the display on the EV3 screen
 						while (option == 0) // and wait for a button press. The button
 							option = Button.waitForAnyPress(); // ID (option) determines what type of control to use
 					}
@@ -513,10 +564,10 @@ public class MainProject {
 				};
 			}
 		}
-	
+
 		if(currState==State.Done){
 			leftMotor.stop(true);
-			rightMotor.stop(true);
+			rightMotor.stop(false);
 			System.exit(0);
 		}
 	} 

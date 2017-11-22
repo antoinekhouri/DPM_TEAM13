@@ -1,6 +1,6 @@
 package ca.mcgill.ecse211.project13;
 
-import ca.mcgill.ecse211.project13.Odometer;
+import ca.mcgill.ecse211.project13.Odometer;		
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 /**
  * This class implements the bridge crossing part of the project. In the MainProject class, 
@@ -8,55 +8,107 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  * of this class will be called to cross the bridge. The current implementation only supports
  * a corner shaped bridge, not a straight line bridge. The implementation first traverses the X
  * or Y portion of the bridge, depending on the bridge's shape, then turns 90 degrees in the appropriate 
- * direction and traverse the second portion of the bridge.
+ * direction and traverses the second portion of the bridge.
  * @author antoinekhouri
  *
  */
 
 public class CrossBridge {
+	private static final double TRACK = MainProject.TRACK;
 	private static final double tileLength = 30.48;
-	private static final int FORWARD_SPEED = 150;
+	private static final int FORWARD_SPEED = 200;
+	private static final int FORWARD_SPEED_RIGHT = (int) (FORWARD_SPEED*1.008);
 	private static final int ROTATE_SPEED = 50;
-/**
- * This method only supports a non straight-line bridge, i.e. a corner shaped bridge.
- * @param endX the X coordinate of the end of the bridge
- * @param endY the Y coordinate of the end of the bridge
- * @param odometer the odometer used to poll the robot's current position.
- */
-	public void cross(double endX, double endY, Odometer odometer){
-		boolean isGoingRight = false;
-		endX = endX*tileLength;
-		endY = endY*tileLength;
-		if(Math.abs(odometer.getTheta()-90)<10){
-			isGoingRight = true;
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), false);
+	/**
+	 * This method only supports a non straight-line bridge, i.e. a corner shaped bridge.
+	 * @param endX the X coordinate of the end of the bridge
+	 * @param endY the Y coordinate of the end of the bridge
+	 * @param odometer the odometer used to poll the robot's current position.
+	 */
+	public void cross(double endX, double endY, Odometer odometer, boolean isGoingRight, int finalX, int finalY, boolean isGreenTeam){
+
+		endX = (1+endX)*tileLength;
+		endY = (endY)*tileLength+tileLength/2;
+		if(isGoingRight){
+
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			//			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), true);
+			//			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), false);
+			turnTo(0, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+					TRACK);
+			MainProject.rightMotor.setSpeed(FORWARD_SPEED_RIGHT);
+			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), true);
 			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), false);
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), false);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			//			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), true);
+			//			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), false);
+			turnTo(90, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+					TRACK);
 		}else{
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), false);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			//			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), true);
+			//			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), false);
+			turnTo(0, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+					TRACK);
+			MainProject.rightMotor.setSpeed(FORWARD_SPEED_RIGHT);
+			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 			MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), true);
 			MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), false);
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), false);
-			isGoingRight = false;
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			//			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), true);
+			//			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), false);
+			turnTo(270, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+					TRACK);
+
 		}
+		MainProject.rightMotor.setSpeed(FORWARD_SPEED_RIGHT);
+		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, endX-tileLength/2), true);
 		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, endX-tileLength/2), false);
 		if(isGoingRight){
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), false);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), true);
+			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), false);
+			//			turnTo(270, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+			//					TRACK);
 		}else{
-			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), true);
-			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -90.0), false);
+			MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), true);
+			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), false);
+			//			turnTo(90, odometer,MainProject.rightMotor,MainProject.leftMotor, MainProject.WHEEL_RADIUS,MainProject.WHEEL_RADIUS,
+			//					TRACK);
 		}
+		MainProject.rightMotor.setSpeed(FORWARD_SPEED_RIGHT);
+		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, endY), true);
 		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, endY), false);
-		
-		
+		MainProject.rightMotor.setSpeed(ROTATE_SPEED);
+		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
+		if(isGoingRight){				
+			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), true);
+			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, -90.0), false);
+		}else{
+			MainProject.leftMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), true);
+			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, 90.0), false);	
+		}
+		MainProject.rightMotor.setSpeed(FORWARD_SPEED_RIGHT);
+		MainProject.leftMotor.setSpeed(FORWARD_SPEED);
+		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), true);
+		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), false);
+		odometer.setX((finalX+1)*tileLength);
+		if (isGreenTeam){
+			odometer.setY((finalY-1)*tileLength);
+		}else{
+			odometer.setY((finalY-1)*tileLength);
+		}
+
 	}
 	/**
 	 * This turning method is the same as the one used in navigation, as we
@@ -83,13 +135,14 @@ public class CrossBridge {
 		}
 		if((theta-odometer.getTheta())>180){
 
-			rightMotor.rotate(convertAngle(rightRadius, width, 360-(theta-odometer.getTheta())), true);
-			leftMotor.rotate((-convertAngle(leftRadius, width, 360-(theta-odometer.getTheta()))), false);			  
+			MainProject.rightMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, TRACK, 360-(theta-odometer.getTheta())), true);
+			MainProject.leftMotor.rotate((-convertAngle(MainProject.WHEEL_RADIUS, TRACK, 360-(theta-odometer.getTheta()))), false);			  
 		}
 		else{
-			leftMotor.rotate((convertAngle(leftRadius, width, theta-odometer.getTheta())), true);
-			rightMotor.rotate(-convertAngle(rightRadius, width, theta-odometer.getTheta()), false);
+			MainProject.leftMotor.rotate((convertAngle(MainProject.WHEEL_RADIUS, TRACK, theta-odometer.getTheta())), true);
+			MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, TRACK, theta-odometer.getTheta()), false);
 		}
+
 
 	}
 	private static int convertDistance(double radius, double distance) {
@@ -98,7 +151,7 @@ public class CrossBridge {
 	/**
 	 * Converts angle so that it can be used bendY the robot to rotate
 	 * @param radius wheel radius
-	 * @param MainProject.TRACK distance between the two wheels
+	 * @param TRACK distance between the two wheels
 	 * @param angle angle the robot should turn 
 	 * @return
 	 */

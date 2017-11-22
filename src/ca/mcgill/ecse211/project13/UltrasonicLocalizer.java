@@ -122,7 +122,7 @@ public class UltrasonicLocalizer implements UltrasonicController {
 	    
 	    if(isAlphaSet && isBetaSet){
 	    	if(alpha<beta){
-	    		dTheta = -20- (alpha+beta)/2;
+	    		dTheta = -10- (alpha+beta)/2;
 	    		isdThetaSet = true;
 	    	} else {
 	    		dTheta = 130- (alpha+beta)/2;

@@ -19,8 +19,9 @@ import lejos.robotics.SampleProvider;
  */
 public class Navigation implements UltrasonicController {
 	// Constants and variables
-	private static final int FORWARD_SPEED = 170;
-	private static final int FORWARD_SPEED_Right = (int) (FORWARD_SPEED*1.003);
+	private static final int FORWARD_SPEED_Right = 200;
+	private static final int FORWARD_SPEED = (int) ((int) FORWARD_SPEED_Right * (1.004));
+	
 	private static final int ROTATE_SPEED = 50;
 	private static final int ROTATE_SPEED_Right = ROTATE_SPEED;
 	private static final double tileLength = 30.48;
@@ -48,6 +49,7 @@ public class Navigation implements UltrasonicController {
 	private boolean isDoneWithX = false;
 	private double xCounter;
 	private double yCounter;
+	private boolean alternate = false;
 	private boolean isDoneWithY = false;
 	/**
 	 * Default constructor
@@ -90,7 +92,7 @@ public class Navigation implements UltrasonicController {
 			if(yCounter==y0){
 				isDoneWithY = true;
 				MainProject.rightMotor.stop(true);
-				MainProject.leftMotor.stop(true);
+				MainProject.leftMotor.stop(false);
 			}
 			if(xCounter==x0){
 				isDoneWithX = true;
@@ -128,9 +130,15 @@ public class Navigation implements UltrasonicController {
 
 			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
-
-			MainProject.rightMotor.forward();
-			MainProject.leftMotor.forward();
+			if(alternate){
+				MainProject.rightMotor.forward();
+				MainProject.leftMotor.forward();
+				alternate = false;
+			}else{
+				MainProject.leftMotor.forward();
+				MainProject.rightMotor.forward();
+				alternate = true;
+			}
 			
 
 			try {
@@ -222,7 +230,7 @@ public class Navigation implements UltrasonicController {
 					if(yCounter==y0){
 						isDoneWithY = true;
 						MainProject.rightMotor.stop(true);
-						MainProject.leftMotor.stop(true);
+						MainProject.leftMotor.stop(false);
 					}
 				}
 
@@ -307,8 +315,15 @@ public class Navigation implements UltrasonicController {
 			MainProject.leftMotor.setSpeed(FORWARD_SPEED);
 			MainProject.rightMotor.setSpeed(FORWARD_SPEED_Right);
 
-			MainProject.leftMotor.forward();
-			MainProject.rightMotor.forward();
+			if(alternate){
+				MainProject.rightMotor.forward();
+				MainProject.leftMotor.forward();
+				alternate = false;
+			}else{
+				MainProject.leftMotor.forward();
+				MainProject.rightMotor.forward();
+				alternate = true;
+			}
 
 			try {
 				Thread.sleep(2000);
