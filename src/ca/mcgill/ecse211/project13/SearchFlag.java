@@ -1,11 +1,11 @@
 package ca.mcgill.ecse211.project13;
 
-import lejos.hardware.Sound;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.Sound;	
 import lejos.robotics.SampleProvider;
 /**
  * This class implements the flag search portion of the project.
  * The ultrasonic sensor moves 45 degrees in each direction and then the robot beeps 3 times to indicate it has found the flag.
+ * Our prior implementaion of the flag search is described in the weeks 6 software document.
  * @author antoinekhouri
  *
  */
@@ -44,6 +44,7 @@ public class SearchFlag {
 		
 //		MainProject.leftMotor.setSpeed(ROTATE_SPEED);
 //	    MainProject.rightMotor.setSpeed(ROTATE_SPEED); 
+		MainProject.sMotor.setSpeed(50);
 		MainProject.sMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, -45), false);
 		MainProject.sMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 45), false);
 		MainProject.sMotor.rotate(convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 45), false);

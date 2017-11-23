@@ -73,7 +73,7 @@ public class MainProject {
 
 
 	// ** Set these as appropriate for your team and current situation **
-	private static final String SERVER_IP = "192.168.2.13";
+	private static final String SERVER_IP = "192.168.2.38";
 
 
 	private static final int TEAM_NUMBER = 13;
@@ -202,16 +202,16 @@ public class MainProject {
 			finalY = 1;
 			finalTheta = 0;
 		}else if(startPosition ==1){
-			finalX =7;
+			finalX =11;
 			finalY =1;
 			finalTheta = 0;
 		}else if(startPosition ==2){
-			finalX = 7;
-			finalY = 7;
+			finalX = 11;
+			finalY = 11;
 			finalTheta = 180;
 		}else{
 			finalX = 1;
-			finalY = 7;
+			finalY = 11;
 			finalTheta = 180;
 		}
 		if(isGreenTeam){
@@ -451,7 +451,7 @@ public class MainProject {
 					bridgeTravelX = bridgeUpperRightX-navBackX;
 					bridgeTravelY = bridgeUpperRightY-bridgeEndY;
 				}
-				cb.cross(bridgeTravelX, bridgeTravelY, odometer,isGoingRight, bridgeEndX, bridgeEndY, isGreenTeam);
+				cb.cross(bridgeTravelX, bridgeTravelY, odometer,isGoingRight, bridgeEndX, bridgeEndY);
 				if(isGreenTeam){
 					setState(State.GoHome);
 				}

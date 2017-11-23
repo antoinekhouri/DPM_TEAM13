@@ -20,7 +20,7 @@ import lejos.robotics.SampleProvider;
 public class Navigation implements UltrasonicController {
 	// Constants and variables
 	private static final int FORWARD_SPEED_Right = 200;
-	private static final int FORWARD_SPEED = (int) ((int) FORWARD_SPEED_Right * (1.004));
+	private static final int FORWARD_SPEED = (int) ((int) FORWARD_SPEED_Right * (1.003));
 	
 	private static final int ROTATE_SPEED = 50;
 	private static final int ROTATE_SPEED_Right = ROTATE_SPEED;

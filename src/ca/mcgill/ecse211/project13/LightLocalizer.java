@@ -37,10 +37,10 @@ public class LightLocalizer {
 	private double finalX;
 	private double finalY;
 	private double finalTheta;
-	
+
 	private boolean isZipLineLocalization = false;
 	// private EV3LargeRegulatedMotor MainProject.leftMotor, MainProject.rightMotor;
-	
+
 	/**
 	 * Default constructor
 	 * @param odometer odometer used to poll 
@@ -279,11 +279,13 @@ public class LightLocalizer {
 					MainProject.rightMotor.rotate(-convertAngle(MainProject.WHEEL_RADIUS, MainProject.TRACK, 90.0), false);
 					isOkay = false;
 				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
+				if(!isAfter){
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
 
-					e1.printStackTrace();
+						e1.printStackTrace();
+					}
 				}
 				if(isOkay && !isAfter){
 					while (getColorDataLeft() >  lightDensity && getColorDataRight() > lightDensity) { 
@@ -334,7 +336,7 @@ public class LightLocalizer {
 					}
 				}
 			}
-			
+
 		}
 
 		odometer.setX(x*tileLength);

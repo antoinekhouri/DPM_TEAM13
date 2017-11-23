@@ -3,7 +3,7 @@ package ca.mcgill.ecse211.project13;
 import ca.mcgill.ecse211.project13.Odometer;		
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 /**
- * This class implements the bridge crossing part of the project. In the MainProject class, 
+ * This class implements the bridge crossing part(shallow water) of the project. In the MainProject class, 
  * after the robot is called to navigate to the start point of the bridge, the cross() method
  * of this class will be called to cross the bridge. The current implementation only supports
  * a corner shaped bridge, not a straight line bridge. The implementation first traverses the X
@@ -24,8 +24,12 @@ public class CrossBridge {
 	 * @param endX the X coordinate of the end of the bridge
 	 * @param endY the Y coordinate of the end of the bridge
 	 * @param odometer the odometer used to poll the robot's current position.
+	 * @param isGoingRight Boolean that indicates the direction of the bridge
+	 * @param finalX End X coordinate of the bridge
+	 * @param finalY End Y coordinate of the bridge
+	 * 
 	 */
-	public void cross(double endX, double endY, Odometer odometer, boolean isGoingRight, int finalX, int finalY, boolean isGreenTeam){
+	public void cross(double endX, double endY, Odometer odometer, boolean isGoingRight, int finalX, int finalY){
 
 		endX = (1+endX)*tileLength;
 		endY = (endY)*tileLength+tileLength/2;
@@ -103,11 +107,6 @@ public class CrossBridge {
 		MainProject.leftMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), true);
 		MainProject.rightMotor.rotate(convertDistance(MainProject.WHEEL_RADIUS, tileLength/2), false);
 		odometer.setX((finalX+1)*tileLength);
-		if (isGreenTeam){
-			odometer.setY((finalY-1)*tileLength);
-		}else{
-			odometer.setY((finalY-1)*tileLength);
-		}
 
 	}
 	/**
