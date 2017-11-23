@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.json.simple.parser.ParseException;
 
+import SearchFlag.SearchFlagDetectTest;
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 /**
  * This is the main class that will run the robot. It will run all the threads and call all
@@ -71,7 +72,7 @@ public class MainProject {
 
 	// ** Set these as appropriate for your team and current situation **
 <<<<<<< HEAD
-	private static final String SERVER_IP = "192.168.2.5";
+	private static final String SERVER_IP = "192.168.2.28";
 =======
 	private static final String SERVER_IP = "192.168.2.8";
 >>>>>>> 6d6858ece17d0c77d56855df94d99a8beeb41ac3
@@ -411,14 +412,8 @@ public class MainProject {
 				}
 			}
 			if(currState == State.FlagSearching){
-				final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
-				if(!isZipLineVertical){
-					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller, isZipLineVertical);
-				}else{
-					nav2.travelTo(usDistance, odometer, WHEEL_RADIUS, WHEEL_RADIUS, TRACK,searchZoneX, searchZoneY, zipLineEndX, zipLineEndY, usPoller);
-				}
 				
-				final SearchFlag search = new SearchFlag();
+				final SearchFlag search = new SearchFlag(odometer, colorValueFront, colorDataFront, usPoller);
 				search.detect(searchZoneX, searchZoneY, searchZoneX2, searchZoneY2, odometer);
 				
 				setState(State.Done);

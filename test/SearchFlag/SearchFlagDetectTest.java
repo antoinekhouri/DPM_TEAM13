@@ -1,10 +1,10 @@
 package SearchFlag;
 
 
-import LocalizationTest.LocalizationTestMain;
-import NavigationTest.UltrasonicPoller;
 import lejos.hardware.Sound;
-import lejos.hardware.motor.EV3LargeRegulatedMotor;
+//import lejos.hardware.motor.EV3LargeRegulatedMotor;
+//import lejos.hardware.sensor.EV3ColorSensor;
+//import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 
 
@@ -25,35 +25,38 @@ public class SearchFlagDetectTest {
 		//Variables
 		
 		public static double distance;
-		private Odometer odometer;
 		private UltrasonicPoller usPoller; 
-		private SampleProvider colorSensorFront;
+		private SampleProvider colorValueFront;
+		private float[] colorDataRight;
+		private SampleProvider colorValueRight;
+		private float[] colorDataLeft;
+		private SampleProvider colorValueLeft;
 		private float[] colorDataFront;
-		private boolean isDetectBlock = false;
-		private boolean isCorrectFlag = false;
+		private boolean isDetectBlock;
+		//private boolean isCorrectFlag = false;
 		private static final int FORWARD_SPEED = 150;
 		private static final int ROTATE_SPEED = 50;
-		private static double lightDensity = 0.40;
+		private static int color = 3;
 		int x1,y1,x2,y2,x3,y3,x4,y4;
-		int[] coordinates;
+		double[] coordinates;
+		double[] angles;
 		
-		public SearchFlagDetectTest(Odometer odometer, SampleProvider colorSensorFront, float[] colorDataFront) 
+		public SearchFlagDetectTest(Odometer odometer, SampleProvider colorValueFront, float[] colorDataFront, UltrasonicPoller usPoller) 
 		{
-			this.odometer = odometer;
-			this.colorSensorFront = colorSensorFront;
+			this.colorValueFront = colorValueFront;
 			this.colorDataFront = colorDataFront;
+			this.usPoller = usPoller;
 		
 		}
-
 		
-		public void detect(int xLL, int yLL, int xUR, int yUR, Odometer odometer){
+		public void detect(double searchZoneX, double searchZoneY, double searchZoneX2, double searchZoneY2, Odometer odometer){
 			
 			SearchFlagMainTest.leftMotor.setSpeed(ROTATE_SPEED);
-		    SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED); 
-		 	SearchFlagMainTest.leftMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
-		 	SearchFlagMainTest.rightMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
+			SearchFlagMainTest.rightMotor.setSpeed(ROTATE_SPEED); 
+			SearchFlagMainTest.leftMotor.rotate(convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
+			SearchFlagMainTest.rightMotor.rotate(-convertAngle(SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK, 360.0), true);
 		 	
-			double longestDistance = Math.sqrt(((yUR - yLL)*(yUR - yLL))+((xUR - xLL)*(xUR - xLL)));
+			double longestDistance = Math.sqrt(((searchZoneY2 - searchZoneY)*(searchZoneY2 - searchZoneY))+((searchZoneX2 - searchZoneX)*(searchZoneX2 - searchZoneX)));
 			
 		 	int i = 0;
 		 	while (SearchFlagMainTest.leftMotor.isMoving() && SearchFlagMainTest.rightMotor.isMoving()) {
@@ -61,23 +64,32 @@ public class SearchFlagDetectTest {
 		 		if(usPoller.getDistance() < longestDistance) {
 		 			isDetectBlock = true;
 		 			coordinates[i] = usPoller.getDistance();
+		 			angles[i] = odometer.getTheta();
 		 			i++;
 		 		}
 		 	}
+		 	
+			final Navigation nav2 = new Navigation(colorValueLeft, colorDataLeft, colorValueRight, colorDataRight);
 		 	for (int j = 0; j < coordinates.length-1; j++) {
+		 		
+		 		nav2.turnTo(angles[j], odometer, SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.WHEEL_RADIUS, SearchFlagMainTest.TRACK);
+		 		
 		 		SearchFlagMainTest.leftMotor.setSpeed(FORWARD_SPEED);
 		 		SearchFlagMainTest.rightMotor.setSpeed(FORWARD_SPEED); 
-		 		SearchFlagMainTest.leftMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, coordinates[j]), true);
-		 		SearchFlagMainTest.rightMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, coordinates[j]), false);
-		 		if(getColorDataFront() < lightDensity+0.1 && getColorDataFront() > lightDensity-0.1){
+		 		SearchFlagMainTest.leftMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, coordinates[j]-3.0), true);
+		 		SearchFlagMainTest.rightMotor.rotate(convertDistance(SearchFlagMainTest.WHEEL_RADIUS, coordinates[j]-3.0), false);
+		 		if(getColorDataFront() == color){
 		 			Sound.beep();
+		 			Sound.beep();
+		 			Sound.beep();
+
 		 		}
 		 	}
 		 	
 		}
 		
 		private float getColorDataFront() {
-			colorSensorFront.fetchSample(colorDataFront, 0);
+			colorValueFront.fetchSample(colorDataFront, 0);
 			float colorBrightnessLevel = (colorDataFront[0] + colorDataFront[1] + colorDataFront[2]);
 			return colorBrightnessLevel;
 		}

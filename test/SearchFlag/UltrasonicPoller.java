@@ -12,6 +12,7 @@ import lejos.robotics.SampleProvider;
 public class UltrasonicPoller extends Thread {
   private SampleProvider us;
   private UltrasonicController cont;
+  private SearchFlagDetectTest search;
   private float[] usData;
   private int distance;
   /**

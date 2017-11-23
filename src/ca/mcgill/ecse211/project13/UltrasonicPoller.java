@@ -61,7 +61,7 @@ public class UltrasonicPoller extends Thread {
   }
   /**
    * 
-   * @return current distance read by the ultrasnoic sensor
+   * @return current distance read by the ultrasonic sensor
    */
   public int getDistance() {
     return this.distance;

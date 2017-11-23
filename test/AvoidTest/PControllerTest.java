@@ -19,7 +19,7 @@ public class PControllerTest implements UltrasonicController {
   /**
    * P-controller used to avoid objects by the robot
    * @param bandCenter desired minimum distance where the robot corrects its movement
-   * @param bandwidth  desired threshold below which the robot starst its movement correciton 
+   * @param bandwidth  desired threshold below which the robot start its movement correction 
    */
   public PControllerTest(int bandCenter, int bandwidth) {
 
